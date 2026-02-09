@@ -1,6 +1,12 @@
+---
+id: offline-mode
+title: Offline Mode
+sidebar_position: 10
+---
+
 # Offline Mode
 
-Operating Private AI System without internet access.
+Operating the Private AI System without internet access.
 
 ## Offline Capability
 
@@ -156,43 +162,3 @@ ollama pull codellama:34b
 
 # 3. Return to normal mode
 ```
-
-## Offline Testing
-
-```bash
-#!/bin/bash
-# test-offline.sh
-
-# Disable network (macOS)
-# Turn off Wi-Fi in System Preferences
-
-# Test
-ollama run llama3.3 "Hello, are you working offline?"
-
-# Or airplane mode test
-networksetup -setairportpower en0 off
-# After test
-networksetup -setairportpower en0 on
-```
-
-## Checklist
-
-- [ ] Download all required models
-- [ ] Save OpenClaw image locally
-- [ ] Prepare offline config file
-- [ ] Run offline tests
-
----
-
-## 한국어 (Korean)
-
-### 오프라인 가능 범위
-- Ollama: 모델 사전 다운로드 필요
-- OpenClaw: 이미지 빌드 완료 필요
-- Headscale/Tailscale: 초기 설정 후 부분 가능
-
-### 제한사항
-- 모델 다운로드 불가
-- 클라우드 API 사용 불가
-- 새 기기 등록 불가
-- 웹 검색 불가

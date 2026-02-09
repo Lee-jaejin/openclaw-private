@@ -7,7 +7,10 @@
     "setup": "bash scripts/setup-all.sh",
     "backup": "bash scripts/backup.sh",
     "monitor": "bash scripts/monitor.sh",
-    "health": "bash scripts/health-check.sh"
+    "health": "bash scripts/health-check.sh",
+    "docs:dev": "cd website && npm start",
+    "docs:build": "cd website && npm run build",
+    "docs:serve": "cd website && npm run serve"
   },
   "dependencies": {
     "openclaw": "latest"

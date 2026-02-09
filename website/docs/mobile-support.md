@@ -1,6 +1,12 @@
+---
+id: mobile-support
+title: Mobile Support
+sidebar_position: 9
+---
+
 # Mobile Support
 
-Accessing Private AI System from iOS/Android devices.
+Accessing the Private AI System from iOS/Android devices.
 
 ## Architecture
 
@@ -31,12 +37,10 @@ App Store → Search "Tailscale" → Install
 
 ### 2. Connect to Headscale
 
-```
 1. Open Tailscale app
 2. Settings → "Use custom control server"
-3. Enter Headscale URL: https://headscale.your-domain.com
+3. Enter Headscale URL: `https://headscale.your-domain.com`
 4. Login (use pre-auth key)
-```
 
 ### 3. Generate Pre-auth Key (on server)
 
@@ -83,13 +87,7 @@ openclaw gateway run --web-ui
 # http://100.64.x.x:18789 (Tailscale IP)
 ```
 
-### Option 2: Native App (Future)
-
-- Develop with React Native or Flutter
-- Integrate Tailscale SDK
-- Support local notifications
-
-### Option 3: Telegram/Signal Integration
+### Option 2: Telegram/Signal Integration
 
 Access through existing messaging apps:
 
@@ -100,43 +98,17 @@ openclaw channels add telegram
 # Chat with bot from mobile Telegram
 ```
 
-## Push Notifications (VPN Internal)
-
-### Local Push Server (Optional)
-
-```bash
-# ntfy (self-hosted push)
-docker run -d --name ntfy \
-  -p 8080:80 \
-  binwiederhier/ntfy
-
-# Send notification
-curl -d "New message arrived" http://100.64.x.x:8080/ai-alerts
-```
-
-### iOS Shortcuts Integration
-
-```
-1. Open Shortcuts app
-2. Create new shortcut
-3. Add "Get Contents of URL"
-4. Configure Tailscale IP + endpoint
-```
-
 ## Security Considerations
 
 ### VPN Required
 
-```
-✅ All mobile access goes through Tailscale VPN
-✅ No public internet exposure
-✅ Device authentication required (pre-auth key)
-```
+- ✅ All mobile access goes through Tailscale VPN
+- ✅ No public internet exposure
+- ✅ Device authentication required (pre-auth key)
 
-### Additional Security
+### Additional Security (ACL)
 
-```bash
-# Restrict mobile access with Headscale ACL
+```json
 {
   "acls": [
     {
@@ -187,30 +159,3 @@ tailscale ping <server-ip>
 # If using DERP relay, expect slower speeds
 # Same network = direct connection
 ```
-
-## Checklist
-
-- [ ] Install iOS Tailscale
-- [ ] Install Android Tailscale
-- [ ] Generate pre-auth keys
-- [ ] Register mobile devices
-- [ ] Test web UI access
-- [ ] Configure push notifications (optional)
-
----
-
-## 한국어 (Korean)
-
-### iOS 설정
-1. App Store에서 Tailscale 설치
-2. 설정에서 custom control server 입력
-3. Pre-auth key로 인증
-
-### Android 설정
-1. Play Store에서 Tailscale 설치
-2. iOS와 동일한 절차
-
-### 보안 고려사항
-- 모든 접근은 VPN 통과 필수
-- 공용 인터넷 노출 없음
-- 기기 인증 필수

@@ -1,8 +1,14 @@
+---
+id: update-policy
+title: Update Policy
+sidebar_position: 11
+---
+
 # Update Policy
 
 Version management and update procedures for Private AI System components.
 
-## Update Schedule by Component
+## Update Schedule
 
 | Component | Recommended | Automation | Importance |
 |-----------|-------------|------------|------------|
@@ -117,15 +123,6 @@ sudo cp ~/backups/headscale-YYYYMMDD.db /var/lib/headscale/db.sqlite
 sudo systemctl start headscale
 ```
 
-### Ollama Model Rollback
-
-```bash
-# Specify version (if available)
-ollama pull codellama:34b-v1.0
-
-# If not available, backup before update
-```
-
 ### OpenClaw Rollback
 
 ```bash
@@ -136,19 +133,6 @@ docker build -t openclaw:local .
 ```
 
 ## Version Tracking
-
-### Version Log File
-
-`~/private-ai-versions.md`:
-
-```markdown
-# Private AI System Versions
-
-| Date | Component | Previous | New | Notes |
-|------|-----------|----------|-----|-------|
-| 2026-02-07 | Ollama | 0.5.1 | 0.5.2 | Bug fix |
-| 2026-02-07 | Headscale | 0.23.0 | 0.24.0 | Security patch |
-```
 
 ### Version Check Script
 
@@ -177,42 +161,3 @@ ollama list 2>/dev/null || echo "N/A"
 - [ ] Check changelog (breaking changes)
 - [ ] Test in staging (if possible)
 - [ ] Prepare rollback plan
-
-## Automation (Optional)
-
-### Update Notification Script
-
-```bash
-#!/bin/bash
-# notify-updates.sh
-
-# Check latest Ollama version (GitHub API)
-LATEST=$(curl -s https://api.github.com/repos/ollama/ollama/releases/latest | jq -r '.tag_name')
-CURRENT=$(ollama --version | awk '{print $2}')
-
-if [ "$LATEST" != "$CURRENT" ]; then
-  osascript -e "display notification \"Ollama $LATEST available (current: $CURRENT)\" with title \"Update Available\""
-fi
-```
-
-## Checklist
-
-- [ ] Deploy check-versions.sh
-- [ ] Create version log file
-- [ ] Set up update notification script
-- [ ] Run rollback test
-
----
-
-## 한국어 (Korean)
-
-### 업데이트 주기
-- Headscale: 월간 (수동)
-- Tailscale: 자동
-- Ollama: 월간 (수동)
-- Ollama 모델: 필요시
-
-### 롤백 절차
-1. 서비스 중지
-2. 이전 버전/백업 복원
-3. 서비스 시작
