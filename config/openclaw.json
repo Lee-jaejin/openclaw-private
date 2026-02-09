@@ -1,0 +1,38 @@
+{
+  "$schema": "https://openclaw.ai/schema/config.json",
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "ollama/llama3.3:latest",
+        "fallbacks": [
+          "ollama/codellama:34b",
+          "ollama/llama3.2:latest"
+        ]
+      }
+    },
+    "profiles": {
+      "coder": {
+        "model": {
+          "primary": "ollama/codellama:34b",
+          "fallbacks": ["ollama/llama3.3:latest"]
+        }
+      },
+      "reasoner": {
+        "model": {
+          "primary": "ollama/llama3.3:70b",
+          "fallbacks": ["ollama/llama3.3:latest"]
+        }
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://host.containers.internal:11434/v1"
+      }
+    }
+  },
+  "gateway": {
+    "mode": "local"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["*"],
+      "dst": ["*:*"]
+    }
+  ],
+  "tagOwners": {
+    "tag:server": ["autogroup:admin"],
+    "tag:client": ["autogroup:admin"]
+  },
+  "autoApprovers": {
+    "routes": {
+      "0.0.0.0/0": ["autogroup:admin"]
+    }
+  }
+}

@@ -1,0 +1,60 @@
+# Headscale configuration
+# https://github.com/juanfont/headscale
+
+server_url: https://headscale.local:8080
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 0.0.0.0:9090
+
+# gRPC settings
+grpc_listen_addr: 0.0.0.0:50443
+grpc_allow_insecure: false
+
+# Private network configuration
+private_key_path: /var/lib/headscale/private.key
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+
+# IP allocation
+ip_prefixes:
+  - 100.64.0.0/10   # IPv4
+  - fd7a:115c:a1e0::/48  # IPv6
+
+# Database
+db_type: sqlite3
+db_path: /var/lib/headscale/db.sqlite
+
+# DERP (relay) configuration
+derp:
+  server:
+    enabled: true
+    region_id: 999
+    region_code: "private"
+    region_name: "Private DERP"
+    stun_listen_addr: "0.0.0.0:3478"
+  urls: []  # No public DERP servers
+  auto_update_enabled: false
+  update_frequency: 24h
+
+# DNS configuration
+dns_config:
+  override_local_dns: false
+  nameservers:
+    - 1.1.1.1
+    - 8.8.8.8
+  magic_dns: true
+  base_domain: private.local
+
+# Logging
+log:
+  format: text
+  level: info
+
+# ACL policy file
+acl_policy_path: /etc/headscale/acl.json
+
+# Disable telemetry
+disable_check_updates: true
+
+# Node registration
+ephemeral_node_inactivity_timeout: 30m
+node_update_check_interval: 10s

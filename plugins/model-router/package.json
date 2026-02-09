@@ -1,0 +1,23 @@
+{
+  "name": "@openclaw-private/model-router",
+  "version": "0.1.0",
+  "description": "Multi-LLM routing plugin for task-based model selection",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "peerDependencies": {
+    "openclaw": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^22.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "private": true
+}

@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  headscale:
+    image: headscale/headscale:latest
+    container_name: headscale
+    restart: unless-stopped
+    ports:
+      - "8080:8080"      # Web UI / API
+      - "9090:9090"      # Metrics
+    volumes:
+      - ./config:/etc/headscale
+      - headscale-data:/var/lib/headscale
+    command: serve
+    environment:
+      - TZ=Asia/Seoul
+
+volumes:
+  headscale-data:
