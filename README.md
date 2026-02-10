@@ -39,6 +39,14 @@ Self-hosted AI assistant infrastructure using:
 git clone https://github.com/<username>/openclaw-private.git
 cd openclaw-private
 
+# This repo expects the OpenClaw source at ./openclaw
+# (e.g., git submodule or a checked-out sibling directory).
+# Example:
+#   git submodule add https://github.com/openclaw/openclaw.git openclaw
+
+# Create your local env (do not commit .env)
+cp .env.example .env
+
 # Run complete setup
 npm run setup
 # or

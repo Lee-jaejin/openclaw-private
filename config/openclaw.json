@@ -1,5 +1,4 @@
 {
-  "$schema": "https://openclaw.ai/schema/config.json",
   "agents": {
     "defaults": {
       "model": {
@@ -9,30 +8,22 @@
           "ollama/llama3.2:latest"
         ]
       }
-    },
-    "profiles": {
-      "coder": {
-        "model": {
-          "primary": "ollama/codellama:34b",
-          "fallbacks": ["ollama/llama3.3:latest"]
-        }
-      },
-      "reasoner": {
-        "model": {
-          "primary": "ollama/llama3.3:70b",
-          "fallbacks": ["ollama/llama3.3:latest"]
-        }
-      }
     }
   },
   "models": {
     "providers": {
       "ollama": {
-        "baseUrl": "http://host.containers.internal:11434/v1"
+        "baseUrl": "${OLLAMA_BASE_URL}",
+        "apiKey": "${OLLAMA_API_KEY}",
+        "api": "openai-completions"
       }
     }
   },
   "gateway": {
-    "mode": "local"
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    }
   }
 }

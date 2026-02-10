@@ -33,8 +33,8 @@ services:
   # === AI 어시스턴트 ===
   openclaw:
     build:
-      context: ./infra/openclaw
-      dockerfile: Dockerfile
+      context: ./openclaw
+      dockerfile: ./infra/openclaw/Dockerfile
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped
@@ -45,8 +45,10 @@ services:
     environment:
       - OLLAMA_HOST=http://ollama:11434
       - NODE_ENV=production
+    env_file:
+      - ./.env
     volumes:
-      - ./config/openclaw.json:/home/node/.openclaw/config.json:ro
+      - ./config/openclaw.json:/home/node/.openclaw/openclaw.json:ro
       - openclaw-sessions:/home/node/.openclaw/sessions
     security_opt:
       - no-new-privileges:true

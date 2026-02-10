@@ -14,6 +14,7 @@ website/.docusaurus/
 
 # OS
 .DS_Store
+.env
 Thumbs.db
 
 # Logs

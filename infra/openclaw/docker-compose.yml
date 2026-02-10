@@ -3,8 +3,8 @@ version: "3.9"
 services:
   openclaw:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../../openclaw
+      dockerfile: ../../infra/openclaw/Dockerfile
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped
@@ -13,8 +13,10 @@ services:
     environment:
       - OLLAMA_HOST=http://host.containers.internal:11434
       - NODE_ENV=production
+    env_file:
+      - ../../.env
     volumes:
-      - ../../config/openclaw.json:/home/node/.openclaw/config.json:ro
+      - ../../config/openclaw.json:/home/node/.openclaw/openclaw.json:ro
       - openclaw-sessions:/home/node/.openclaw/sessions
     security_opt:
       - no-new-privileges:true
