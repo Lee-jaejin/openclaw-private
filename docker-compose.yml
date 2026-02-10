@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  # === VPN 코디네이터 ===
+  headscale:
+    image: headscale/headscale:latest
+    container_name: headscale
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    volumes:
+      - ./infra/headscale/config:/etc/headscale
+      - headscale-data:/var/lib/headscale
+    command: serve
+    environment:
+      - TZ=Asia/Seoul
+
+  # === 로컬 LLM 서버 ===
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=5m
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+
+  # === AI 어시스턴트 ===
+  openclaw:
+    build:
+      context: ./infra/openclaw
+      dockerfile: Dockerfile
+    image: openclaw:local
+    container_name: openclaw
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    ports:
+      - "18789:18789"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - NODE_ENV=production
+    volumes:
+      - ./config/openclaw.json:/home/node/.openclaw/config.json:ro
+      - openclaw-sessions:/home/node/.openclaw/sessions
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  headscale-data:
+  ollama-models:
+  openclaw-sessions:

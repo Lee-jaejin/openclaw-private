@@ -2,7 +2,7 @@
 # Health check script with exit codes for cron/automation
 # Exit 0 = all healthy, Exit 1 = issues found
 
-set -euo pipefail
+set -uo pipefail
 
 ISSUES=0
 OLLAMA_HOST="${OLLAMA_HOST:-http://localhost:11434}"
@@ -11,8 +11,10 @@ check() {
     local name="$1"
     local result="$2"
 
-    if [[ "$result" == "ok" ]]; then
-        echo "[OK] $name"
+    if [[ "$result" == ok* ]]; then
+        echo "[OK] $name${result:2}"
+    elif [[ "$result" == skip:* ]]; then
+        echo "[SKIP] $name: ${result#skip:}"
     else
         echo "[FAIL] $name: $result"
         ISSUES=$((ISSUES + 1))
@@ -43,7 +45,7 @@ if command -v tailscale &> /dev/null; then
         check "Tailscale" "status: $TS_STATUS"
     fi
 else
-    check "Tailscale" "not installed"
+    check "Tailscale" "skip:not installed"
 fi
 
 # 3. Ollama API
@@ -62,14 +64,17 @@ else
 fi
 
 # 5. OpenClaw container
-if podman ps --format '{{.Names}}' | grep -q "^openclaw$"; then
-    STATUS=$(podman inspect --format='{{.State.Status}}' openclaw)
+if podman ps -a --format '{{.Names}}' | grep -q "^openclaw$"; then
+    STATUS=$(podman inspect --format='{{.State.Status}}' openclaw 2>/dev/null || echo "unknown")
     if [[ "$STATUS" == "running" ]]; then
         if curl -sf "http://localhost:18789/health" > /dev/null 2>&1; then
             check "OpenClaw" "ok"
         else
             check "OpenClaw" "container running but API not responding"
         fi
+    elif [[ "$STATUS" == "exited" ]]; then
+        EXIT_CODE=$(podman inspect --format='{{.State.ExitCode}}' openclaw 2>/dev/null || echo "?")
+        check "OpenClaw" "exited (code: $EXIT_CODE)"
     else
         check "OpenClaw" "container status: $STATUS"
     fi
@@ -83,10 +88,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
     FREE_GB=$(df -BG / | awk 'NR==2 {print $4}' | tr -d 'G')
 fi
-if [[ "$FREE_GB" -ge 10 ]]; then
+if [[ -n "$FREE_GB" ]] && [[ "$FREE_GB" -ge 10 ]] 2>/dev/null; then
     check "Disk Space" "ok (${FREE_GB}GB free)"
-else
+elif [[ -n "$FREE_GB" ]]; then
     check "Disk Space" "low (${FREE_GB}GB free)"
+else
+    check "Disk Space" "unable to determine"
 fi
 
 echo ""
