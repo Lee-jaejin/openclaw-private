@@ -112,4 +112,4 @@ npm run backup
 
 ## License
 
-Private use only. Not for distribution.
+GPL-3.0
