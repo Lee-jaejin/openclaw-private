@@ -99,10 +99,10 @@ cd ~/Study/ai/openclaw
 git pull origin main
 
 # 2. Rebuild image
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 
 # 3. Clean old images
-docker image prune
+podman image prune
 ```
 
 ## Rollback Procedures
@@ -129,7 +129,7 @@ sudo systemctl start headscale
 # Restore to previous commit
 cd ~/Study/ai/openclaw
 git checkout <previous-commit>
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 ```
 
 ## Version Tracking
@@ -147,7 +147,7 @@ echo ""
 echo "Headscale: $(headscale version 2>/dev/null || echo 'N/A')"
 echo "Tailscale: $(tailscale version 2>/dev/null | head -1 || echo 'N/A')"
 echo "Ollama: $(ollama --version 2>/dev/null || echo 'N/A')"
-echo "Docker: $(docker --version 2>/dev/null || echo 'N/A')"
+echo "Podman: $(podman --version 2>/dev/null || echo 'N/A')"
 echo ""
 
 echo "Ollama Models:"

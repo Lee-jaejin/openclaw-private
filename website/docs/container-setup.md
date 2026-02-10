@@ -8,7 +8,7 @@ sidebar_position: 7
 
 Isolated container configuration for the AI gateway.
 
-## Docker Compose
+## Podman Compose
 
 `infra/openclaw/docker-compose.yml`:
 
@@ -23,7 +23,7 @@ services:
     ports:
       - "18789:18789"
     environment:
-      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_HOST=http://host.containers.internal:11434
       - NODE_ENV=production
     volumes:
       - openclaw-config:/home/node/.openclaw
@@ -33,7 +33,7 @@ services:
     cap_drop:
       - ALL
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
 
 volumes:
   openclaw-config:
@@ -44,7 +44,7 @@ volumes:
 
 ```bash
 # From project root
-docker build -t openclaw:local -f infra/openclaw/Dockerfile .
+podman build -t openclaw:local -f infra/openclaw/Dockerfile .
 
 # Or use script
 ./scripts/build-container.sh
@@ -101,7 +101,7 @@ networks:
   "models": {
     "providers": {
       "ollama": {
-        "baseUrl": "http://host.docker.internal:11434/v1"
+        "baseUrl": "http://host.containers.internal:11434/v1"
       }
     }
   },
@@ -116,26 +116,26 @@ networks:
 
 ```bash
 # Start container
-docker-compose up -d
+podman compose up -d
 
 # View logs
-docker logs -f openclaw
+podman logs -f openclaw
 
 # Stop
-docker-compose down
+podman compose down
 ```
 
 ## Health Check
 
 ```bash
 # Check container status
-docker ps
+podman ps
 
 # Check API health
 curl http://localhost:18789/health
 
 # Check Ollama connectivity from container
-docker exec openclaw curl http://host.docker.internal:11434/api/tags
+podman exec openclaw curl http://host.containers.internal:11434/api/tags
 ```
 
 ## Troubleshooting
@@ -143,8 +143,8 @@ docker exec openclaw curl http://host.docker.internal:11434/api/tags
 ### Cannot Connect to Ollama
 
 ```bash
-# Verify host.docker.internal resolves
-docker exec openclaw ping host.docker.internal
+# Verify host.containers.internal resolves
+podman exec openclaw ping host.containers.internal
 
 # Check Ollama is listening
 curl http://localhost:11434/api/tags
@@ -154,8 +154,8 @@ curl http://localhost:11434/api/tags
 
 ```bash
 # Check volume permissions
-docker exec openclaw ls -la /home/node/.openclaw
+podman exec openclaw ls -la /home/node/.openclaw
 
 # Fix ownership if needed
-docker exec -u root openclaw chown -R node:node /home/node/.openclaw
+podman exec -u root openclaw chown -R node:node /home/node/.openclaw
 ```

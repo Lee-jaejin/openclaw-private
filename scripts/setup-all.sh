@@ -24,22 +24,23 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-HAS_DOCKER=false
-if command -v docker &> /dev/null; then
-    HAS_DOCKER=true
+HAS_PODMAN=false
+if command -v podman &> /dev/null; then
+    HAS_PODMAN=true
 fi
 
 echo ""
 echo "=== Step 1: Headscale ==="
-if [[ "$HAS_DOCKER" == true ]]; then
+if [[ "$HAS_PODMAN" == true ]]; then
     cd "$PROJECT_DIR/infra/headscale"
     echo "Starting Headscale container..."
-    docker compose up -d
+    podman compose up -d
     echo "Headscale started on port 8080"
 else
-    echo "[SKIP] Docker not found. Headscale requires Docker."
-    echo "  brew install --cask docker  # macOS"
-    echo "  curl -fsSL https://get.docker.com | sh  # Linux"
+    echo "[SKIP] Podman not found. Headscale requires Podman."
+    echo "  brew install podman  # macOS"
+    echo "  sudo dnf install podman  # Fedora/RHEL"
+    echo "  sudo apt install podman  # Debian/Ubuntu"
 fi
 
 echo ""
@@ -72,22 +73,22 @@ bash "$PROJECT_DIR/infra/ollama/models.sh"
 
 echo ""
 echo "=== Step 4: OpenClaw (Container) ==="
-if [[ "$HAS_DOCKER" != true ]]; then
-    echo "[SKIP] Docker not found. OpenClaw container requires Docker."
-elif docker ps --format '{{.Names}}' | grep -q "^openclaw$"; then
+if [[ "$HAS_PODMAN" != true ]]; then
+    echo "[SKIP] Podman not found. OpenClaw container requires Podman."
+elif podman ps --format '{{.Names}}' | grep -q "^openclaw$"; then
     echo "OpenClaw container already running."
 else
     echo "Building OpenClaw container..."
-    if docker compose build; then
+    if podman compose build; then
         echo "Starting OpenClaw container..."
-        docker compose up -d
+        podman compose up -d
         echo "OpenClaw started on port 18789"
     else
         echo ""
         echo "  [WARN] OpenClaw container build failed."
         echo "  The 'openclaw' npm package may not be available yet."
         echo "  Once available, build and start manually:"
-        echo "    cd $PROJECT_DIR/infra/openclaw && docker compose up -d --build"
+        echo "    cd $PROJECT_DIR/infra/openclaw && podman compose up -d --build"
         echo ""
     fi
 fi
@@ -102,8 +103,8 @@ echo "  1. Connect Tailscale to Headscale:"
 echo "     tailscale up --login-server=https://headscale.local:8080"
 echo ""
 echo "  2. Register node on Headscale server:"
-echo "     docker exec headscale headscale users create <username>"
-echo "     docker exec headscale headscale nodes register --user <username> --key <nodekey>"
+echo "     podman exec headscale headscale users create <username>"
+echo "     podman exec headscale headscale nodes register --user <username> --key <nodekey>"
 echo ""
 echo "  3. Run health check:"
 echo "     bash $SCRIPT_DIR/health-check.sh"

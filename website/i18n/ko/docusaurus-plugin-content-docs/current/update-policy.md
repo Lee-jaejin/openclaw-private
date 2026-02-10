@@ -99,10 +99,10 @@ cd ~/Study/ai/openclaw
 git pull origin main
 
 # 2. 이미지 재빌드
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 
 # 3. 이전 이미지 정리
-docker image prune
+podman image prune
 ```
 
 ## 롤백 절차
@@ -129,7 +129,7 @@ sudo systemctl start headscale
 # 이전 커밋으로 복원
 cd ~/Study/ai/openclaw
 git checkout <previous-commit>
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 ```
 
 ## 버전 추적
@@ -147,7 +147,7 @@ echo ""
 echo "Headscale: $(headscale version 2>/dev/null || echo 'N/A')"
 echo "Tailscale: $(tailscale version 2>/dev/null | head -1 || echo 'N/A')"
 echo "Ollama: $(ollama --version 2>/dev/null || echo 'N/A')"
-echo "Docker: $(docker --version 2>/dev/null || echo 'N/A')"
+echo "Podman: $(podman --version 2>/dev/null || echo 'N/A')"
 echo ""
 
 echo "Ollama 모델:"

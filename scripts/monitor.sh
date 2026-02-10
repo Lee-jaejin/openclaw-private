@@ -16,11 +16,11 @@ echo ""
 
 # 1. Headscale status
 echo ">>> Headscale"
-if docker ps --format '{{.Names}}' | grep -q "^headscale$"; then
-    HEADSCALE_STATUS=$(docker inspect --format='{{.State.Status}}' headscale)
+if podman ps --format '{{.Names}}' | grep -q "^headscale$"; then
+    HEADSCALE_STATUS=$(podman inspect --format='{{.State.Status}}' headscale)
     if [[ "$HEADSCALE_STATUS" == "running" ]]; then
         echo -e "    Status: ${GREEN}Running${NC}"
-        NODE_COUNT=$(docker exec headscale headscale nodes list 2>/dev/null | tail -n +2 | wc -l || echo "0")
+        NODE_COUNT=$(podman exec headscale headscale nodes list 2>/dev/null | tail -n +2 | wc -l || echo "0")
         echo "    Nodes: $NODE_COUNT"
     else
         echo -e "    Status: ${RED}$HEADSCALE_STATUS${NC}"
@@ -70,13 +70,13 @@ echo ""
 
 # 4. OpenClaw status
 echo ">>> OpenClaw"
-if docker ps --format '{{.Names}}' | grep -q "^openclaw$"; then
-    OC_STATUS=$(docker inspect --format='{{.State.Status}}' openclaw)
+if podman ps --format '{{.Names}}' | grep -q "^openclaw$"; then
+    OC_STATUS=$(podman inspect --format='{{.State.Status}}' openclaw)
     if [[ "$OC_STATUS" == "running" ]]; then
         echo -e "    Status: ${GREEN}Running${NC}"
         OC_HEALTH=$(curl -sf "http://localhost:18789/health" 2>/dev/null && echo "healthy" || echo "unhealthy")
         echo "    API: $OC_HEALTH"
-        OC_UPTIME=$(docker inspect --format='{{.State.StartedAt}}' openclaw 2>/dev/null | cut -d'.' -f1 | tr 'T' ' ')
+        OC_UPTIME=$(podman inspect --format='{{.State.StartedAt}}' openclaw 2>/dev/null | cut -d'.' -f1 | tr 'T' ' ')
         echo "    Since: $OC_UPTIME"
     else
         echo -e "    Status: ${YELLOW}$OC_STATUS${NC}"

@@ -22,18 +22,18 @@ brew install ollama
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
-### Docker
+### Podman
 
 ```bash
 cd infra/ollama
-docker compose up -d
+podman compose up -d
 ```
 
-### Docker with NVIDIA GPU
+### Podman with NVIDIA GPU
 
 ```bash
 cd infra/ollama
-docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+podman compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
 ```
 
 ## Model Downloads

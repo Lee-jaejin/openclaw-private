@@ -11,7 +11,7 @@ services:
     ports:
       - "18789:18789"
     environment:
-      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_HOST=http://host.containers.internal:11434
       - NODE_ENV=production
     volumes:
       - ../../config/openclaw.json:/home/node/.openclaw/config.json:ro
@@ -21,7 +21,7 @@ services:
     cap_drop:
       - ALL
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
     networks:
       - openclaw-net
 

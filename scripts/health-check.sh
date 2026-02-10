@@ -23,8 +23,8 @@ echo "=== Health Check: $(date) ==="
 echo ""
 
 # 1. Headscale
-if docker ps --format '{{.Names}}' | grep -q "^headscale$"; then
-    STATUS=$(docker inspect --format='{{.State.Status}}' headscale)
+if podman ps --format '{{.Names}}' | grep -q "^headscale$"; then
+    STATUS=$(podman inspect --format='{{.State.Status}}' headscale)
     if [[ "$STATUS" == "running" ]]; then
         check "Headscale" "ok"
     else
@@ -62,8 +62,8 @@ else
 fi
 
 # 5. OpenClaw container
-if docker ps --format '{{.Names}}' | grep -q "^openclaw$"; then
-    STATUS=$(docker inspect --format='{{.State.Status}}' openclaw)
+if podman ps --format '{{.Names}}' | grep -q "^openclaw$"; then
+    STATUS=$(podman inspect --format='{{.State.Status}}' openclaw)
     if [[ "$STATUS" == "running" ]]; then
         if curl -sf "http://localhost:18789/health" > /dev/null 2>&1; then
             check "OpenClaw" "ok"

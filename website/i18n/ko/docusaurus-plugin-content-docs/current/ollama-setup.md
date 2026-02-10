@@ -22,11 +22,11 @@ brew install ollama
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
-### Docker
+### Podman
 
 ```bash
 cd infra/ollama
-docker-compose up -d
+podman compose up -d
 ```
 
 ## 모델 다운로드

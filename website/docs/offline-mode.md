@@ -34,10 +34,10 @@ ollama list
 
 ```bash
 cd ~/Study/ai/openclaw
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 
 # Save image (for backup)
-docker save openclaw:local -o ~/backups/openclaw-local.tar
+podman save openclaw:local -o ~/backups/openclaw-local.tar
 ```
 
 ### 3. Cache Dependencies
@@ -57,7 +57,7 @@ pnpm install --offline
 ollama serve
 
 # 2. Run OpenClaw (network isolated)
-docker run -it --rm --name openclaw-isolated \
+podman run -it --rm --name openclaw-isolated \
   --network none \
   --security-opt no-new-privileges:true \
   --cap-drop ALL \
@@ -143,7 +143,7 @@ tailscale status
 ```bash
 # 1. Check current state
 ollama list
-docker images
+podman images
 
 # 2. Switch to local mode
 # Disable fallback in openclaw.json

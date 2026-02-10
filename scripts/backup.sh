@@ -18,9 +18,9 @@ mkdir -p "$BACKUP_PATH"
 
 # 1. Headscale backup
 echo ">>> Backing up Headscale..."
-if docker ps --format '{{.Names}}' | grep -q "^headscale$"; then
-    docker cp headscale:/var/lib/headscale/db.sqlite "$BACKUP_PATH/headscale.db"
-    docker cp headscale:/etc/headscale "$BACKUP_PATH/headscale-config"
+if podman ps --format '{{.Names}}' | grep -q "^headscale$"; then
+    podman cp headscale:/var/lib/headscale/db.sqlite "$BACKUP_PATH/headscale.db"
+    podman cp headscale:/etc/headscale "$BACKUP_PATH/headscale-config"
     echo "    Headscale backup: OK"
 else
     echo "    Headscale container not running, skipping..."

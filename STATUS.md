@@ -23,9 +23,9 @@
 
 | 구성요소 | 위치 | 설명 |
 |---------|------|------|
-| Headscale (VPN 코디네이터) | `infra/headscale/` | Docker Compose, ACL, DERP relay 설정 완비 |
+| Headscale (VPN 코디네이터) | `infra/headscale/` | Podman Compose, ACL, DERP relay 설정 완비 |
 | Tailscale 클라이언트 | `infra/tailscale/` | macOS/Linux 자동 감지 설치 스크립트 |
-| Ollama (로컬 LLM) | `infra/ollama/` | Docker 설정 + 모델 다운로드 스크립트 (llama3.3, codellama) |
+| Ollama (로컬 LLM) | `infra/ollama/` | Podman 설정 + 모델 다운로드 스크립트 (llama3.3, codellama) |
 | Model Router 플러그인 | `plugins/model-router/` | TypeScript, 한/영 키워드 기반 태스크 분류 및 모델 라우팅 |
 | 운영 스크립트 | `scripts/` | setup-all.sh, health-check.sh, monitor.sh, backup.sh |
 | 설정 파일 | `config/` | openclaw.json 모델 프로필 설정 |
@@ -46,7 +46,7 @@
 
 | 분류 | 기술 |
 |------|------|
-| 인프라 | Docker, Docker Compose 3.9, WireGuard VPN (Headscale + Tailscale) |
+| 인프라 | Podman (데몬리스 컨테이너), WireGuard VPN (Headscale + Tailscale) |
 | AI/ML | Ollama, Llama 모델 전용 (llama3.3, codellama) |
 | 플러그인 | TypeScript 5.0+, strict mode |
 | 런타임 | Node.js 22+ |
@@ -56,7 +56,7 @@
 ## 보안 아키텍처 (3계층)
 
 1. **네트워크**: WireGuard VPN — ChaCha20 암호화, Curve25519 키 교환
-2. **컨테이너**: Docker — `--cap-drop ALL`, `no-new-privileges`
+2. **컨테이너**: Podman (rootless) — `--cap-drop ALL`, `no-new-privileges`
 3. **데이터**: 모든 추론 로컬 처리, 외부 전송 없음
 
 ## 대상 하드웨어
@@ -72,8 +72,8 @@
 openclaw-private/
 ├── config/                 # OpenClaw 설정 (openclaw.json)
 ├── infra/                  # 인프라 배포
-│   ├── headscale/          # VPN 코디네이터 (Docker)
-│   ├── ollama/             # 로컬 LLM 서버 (Docker)
+│   ├── headscale/          # VPN 코디네이터 (Podman)
+│   ├── ollama/             # 로컬 LLM 서버 (Podman)
 │   └── tailscale/          # VPN 클라이언트 설치
 ├── plugins/                # 커스텀 확장
 │   └── model-router/      # 태스크 기반 모델 라우팅 (TypeScript)

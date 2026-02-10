@@ -11,7 +11,7 @@ Quick setup guide for the private AI system.
 ## Prerequisites
 
 - macOS or Linux
-- Docker and Docker Compose
+- Podman and Podman Compose
 - 16GB+ RAM (36GB recommended for 34B models)
 - Node.js 20+
 
@@ -52,14 +52,14 @@ ollama pull llama3.3:latest
 
 ```bash
 cd infra/headscale
-docker-compose up -d
+podman compose up -d
 ```
 
 ### Step 3: OpenClaw
 
 ```bash
 cd infra/openclaw
-docker-compose up -d
+podman compose up -d
 ```
 
 ### Step 4: Model Router Plugin
@@ -77,7 +77,7 @@ npm run build
 curl http://localhost:11434/api/tags
 
 # Check Headscale
-docker logs headscale
+podman logs headscale
 
 # Check OpenClaw
 curl http://localhost:18789/health

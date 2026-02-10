@@ -34,10 +34,10 @@ ollama list
 
 ```bash
 cd ~/Study/ai/openclaw
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 
 # 이미지 저장 (백업용)
-docker save openclaw:local -o ~/backups/openclaw-local.tar
+podman save openclaw:local -o ~/backups/openclaw-local.tar
 ```
 
 ### 3. 의존성 캐시
@@ -57,7 +57,7 @@ pnpm install --offline
 ollama serve
 
 # 2. OpenClaw 실행 (네트워크 격리)
-docker run -it --rm --name openclaw-isolated \
+podman run -it --rm --name openclaw-isolated \
   --network none \
   --security-opt no-new-privileges:true \
   --cap-drop ALL \
@@ -143,7 +143,7 @@ tailscale status
 ```bash
 # 1. 현재 상태 확인
 ollama list
-docker images
+podman images
 
 # 2. 로컬 모드로 전환
 # openclaw.json에서 fallback 비활성화

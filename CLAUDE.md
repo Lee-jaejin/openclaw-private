@@ -12,8 +12,8 @@
 
 ```
 config/openclaw.json        → 모델 프로필 설정
-infra/headscale/            → VPN 코디네이터 (Docker)
-infra/ollama/               → 로컬 LLM 서버 (Docker)
+infra/headscale/            → VPN 코디네이터 (Podman)
+infra/ollama/               → 로컬 LLM 서버 (Podman)
 infra/tailscale/            → VPN 클라이언트 설치 스크립트
 plugins/model-router/src/   → 태스크→모델 라우팅 (TypeScript)
 scripts/                    → 운영 스크립트 (setup, health, monitor, backup)
@@ -22,7 +22,7 @@ website/                    → Docusaurus 문서 사이트 (한/영)
 
 ## 기술 스택
 
-- **인프라**: Docker, WireGuard VPN (Headscale + Tailscale)
+- **인프라**: Podman (데몬리스 컨테이너), WireGuard VPN (Headscale + Tailscale)
 - **AI**: Ollama + Llama 모델 전용 (외부 API 없음)
 - **플러그인**: TypeScript 5.0+ (strict mode), Node.js 22+
 - **문서**: Docusaurus 3.9.2, i18n (EN/KO)
@@ -39,7 +39,7 @@ website/                    → Docusaurus 문서 사이트 (한/영)
 
 - OpenClaw 앱 본체: 컨테이너 인프라 완료 (`infra/openclaw/`), npm 패키지 배포 대기
 - 테스트: Model Router 완료 (node:test 사용), 추가 컴포넌트 테스트 필요
-- GPU 가속: `docker-compose.gpu.yml` override로 토글 가능. 70B 모델: RAM 확보 후 검증 필요
+- GPU 가속: `docker-compose.gpu.yml` override로 토글 가능 (`podman compose -f`). 70B 모델: RAM 확보 후 검증 필요
 - 클라우드 백업, 자동 업데이트 미구현
 
 ## 커밋 컨벤션

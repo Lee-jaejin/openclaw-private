@@ -8,7 +8,7 @@ sidebar_position: 7
 
 AI 게이트웨이를 위한 격리된 컨테이너 설정입니다.
 
-## Docker Compose
+## Podman Compose
 
 `infra/openclaw/docker-compose.yml`:
 
@@ -23,7 +23,7 @@ services:
     ports:
       - "18789:18789"
     environment:
-      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_HOST=http://host.containers.internal:11434
       - NODE_ENV=production
     volumes:
       - openclaw-config:/home/node/.openclaw
@@ -33,7 +33,7 @@ services:
     cap_drop:
       - ALL
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
 
 volumes:
   openclaw-config:
@@ -44,7 +44,7 @@ volumes:
 
 ```bash
 # 프로젝트 루트에서
-docker build -t openclaw:local -f infra/openclaw/Dockerfile .
+podman build -t openclaw:local -f infra/openclaw/Dockerfile .
 
 # 또는 스크립트 사용
 ./scripts/build-container.sh
@@ -101,7 +101,7 @@ networks:
   "models": {
     "providers": {
       "ollama": {
-        "baseUrl": "http://host.docker.internal:11434/v1"
+        "baseUrl": "http://host.containers.internal:11434/v1"
       }
     }
   },
@@ -116,26 +116,26 @@ networks:
 
 ```bash
 # 컨테이너 시작
-docker-compose up -d
+podman compose up -d
 
 # 로그 확인
-docker logs -f openclaw
+podman logs -f openclaw
 
 # 중지
-docker-compose down
+podman compose down
 ```
 
 ## 헬스 체크
 
 ```bash
 # 컨테이너 상태 확인
-docker ps
+podman ps
 
 # API 헬스 확인
 curl http://localhost:18789/health
 
 # 컨테이너에서 Ollama 연결 확인
-docker exec openclaw curl http://host.docker.internal:11434/api/tags
+podman exec openclaw curl http://host.containers.internal:11434/api/tags
 ```
 
 ## 문제 해결
@@ -143,8 +143,8 @@ docker exec openclaw curl http://host.docker.internal:11434/api/tags
 ### Ollama에 연결 안 됨
 
 ```bash
-# host.docker.internal 해석 확인
-docker exec openclaw ping host.docker.internal
+# host.containers.internal 해석 확인
+podman exec openclaw ping host.containers.internal
 
 # Ollama가 리스닝 중인지 확인
 curl http://localhost:11434/api/tags
@@ -154,8 +154,8 @@ curl http://localhost:11434/api/tags
 
 ```bash
 # 볼륨 권한 확인
-docker exec openclaw ls -la /home/node/.openclaw
+podman exec openclaw ls -la /home/node/.openclaw
 
 # 필요시 소유권 수정
-docker exec -u root openclaw chown -R node:node /home/node/.openclaw
+podman exec -u root openclaw chown -R node:node /home/node/.openclaw
 ```

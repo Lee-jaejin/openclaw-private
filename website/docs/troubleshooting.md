@@ -81,23 +81,23 @@ lsof -i :11434
 
 ```bash
 # Check container logs
-docker logs openclaw
+podman logs openclaw
 
 # Verify image exists
-docker images | grep openclaw
+podman images | grep openclaw
 
 # Rebuild if needed
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 ```
 
 ### Can't Connect to Ollama from Container
 
 ```bash
 # Test from inside container
-docker exec openclaw curl http://host.docker.internal:11434/api/tags
+podman exec openclaw curl http://host.containers.internal:11434/api/tags
 
-# Check Docker network
-docker network ls
+# Check Podman network
+podman network ls
 
 # Verify extra_hosts in docker-compose.yml
 ```
@@ -106,13 +106,13 @@ docker network ls
 
 ```bash
 # Check volume permissions
-docker exec openclaw ls -la /home/node/.openclaw
+podman exec openclaw ls -la /home/node/.openclaw
 
 # Fix ownership
-docker exec -u root openclaw chown -R node:node /home/node/.openclaw
+podman exec -u root openclaw chown -R node:node /home/node/.openclaw
 
 # Restart container
-docker-compose restart openclaw
+podman compose restart openclaw
 ```
 
 ## Mobile Issues
@@ -144,7 +144,7 @@ tailscale netcheck
 # Or manually:
 tailscale status
 curl http://localhost:11434/api/tags
-docker ps
+podman ps
 curl http://localhost:18789/health
 ```
 
@@ -152,13 +152,13 @@ curl http://localhost:18789/health
 
 ```bash
 # Headscale logs
-docker logs headscale > ~/logs/headscale.log
+podman logs headscale > ~/logs/headscale.log
 
 # Ollama logs
 journalctl -u ollama > ~/logs/ollama.log
 
 # OpenClaw logs
-docker logs openclaw > ~/logs/openclaw.log
+podman logs openclaw > ~/logs/openclaw.log
 
 # Tailscale logs
 sudo tailscale bugreport > ~/logs/tailscale-bugreport.txt
@@ -168,13 +168,13 @@ sudo tailscale bugreport > ~/logs/tailscale-bugreport.txt
 
 ```bash
 # Stop all services
-docker-compose down
+podman compose down
 sudo tailscale down
 pkill ollama
 
 # Clear data (careful!)
 rm -rf ~/.ollama/models/*
-docker volume rm openclaw-config openclaw-sessions
+podman volume rm openclaw-config openclaw-sessions
 
 # Restart fresh
 ./scripts/setup-all.sh

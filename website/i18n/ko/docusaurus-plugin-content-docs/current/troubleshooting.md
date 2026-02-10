@@ -81,23 +81,23 @@ lsof -i :11434
 
 ```bash
 # 컨테이너 로그 확인
-docker logs openclaw
+podman logs openclaw
 
 # 이미지 존재 확인
-docker images | grep openclaw
+podman images | grep openclaw
 
 # 필요시 재빌드
-docker build -t openclaw:local .
+podman build -t openclaw:local .
 ```
 
 ### 컨테이너에서 Ollama 연결 안 됨
 
 ```bash
 # 컨테이너 내부에서 테스트
-docker exec openclaw curl http://host.docker.internal:11434/api/tags
+podman exec openclaw curl http://host.containers.internal:11434/api/tags
 
-# Docker 네트워크 확인
-docker network ls
+# Podman 네트워크 확인
+podman network ls
 
 # docker-compose.yml에서 extra_hosts 확인
 ```
@@ -106,13 +106,13 @@ docker network ls
 
 ```bash
 # 볼륨 권한 확인
-docker exec openclaw ls -la /home/node/.openclaw
+podman exec openclaw ls -la /home/node/.openclaw
 
 # 소유권 수정
-docker exec -u root openclaw chown -R node:node /home/node/.openclaw
+podman exec -u root openclaw chown -R node:node /home/node/.openclaw
 
 # 컨테이너 재시작
-docker-compose restart openclaw
+podman compose restart openclaw
 ```
 
 ## 모바일 문제
@@ -144,7 +144,7 @@ tailscale netcheck
 # 또는 수동으로:
 tailscale status
 curl http://localhost:11434/api/tags
-docker ps
+podman ps
 curl http://localhost:18789/health
 ```
 
@@ -152,13 +152,13 @@ curl http://localhost:18789/health
 
 ```bash
 # Headscale 로그
-docker logs headscale > ~/logs/headscale.log
+podman logs headscale > ~/logs/headscale.log
 
 # Ollama 로그
 journalctl -u ollama > ~/logs/ollama.log
 
 # OpenClaw 로그
-docker logs openclaw > ~/logs/openclaw.log
+podman logs openclaw > ~/logs/openclaw.log
 
 # Tailscale 로그
 sudo tailscale bugreport > ~/logs/tailscale-bugreport.txt
@@ -168,13 +168,13 @@ sudo tailscale bugreport > ~/logs/tailscale-bugreport.txt
 
 ```bash
 # 모든 서비스 중지
-docker-compose down
+podman compose down
 sudo tailscale down
 pkill ollama
 
 # 데이터 삭제 (주의!)
 rm -rf ~/.ollama/models/*
-docker volume rm openclaw-config openclaw-sessions
+podman volume rm openclaw-config openclaw-sessions
 
 # 새로 시작
 ./scripts/setup-all.sh

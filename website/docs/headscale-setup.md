@@ -12,11 +12,11 @@ Self-hosted Tailscale coordinator configuration.
 
 Headscale is a self-hosted implementation of the Tailscale control server. It allows you to run your own private WireGuard VPN network without relying on Tailscale's cloud service.
 
-## Docker Installation
+## Podman Installation
 
 ```bash
 cd infra/headscale
-docker-compose up -d
+podman compose up -d
 ```
 
 ### Configuration File
@@ -45,13 +45,13 @@ dns_config:
 
 ```bash
 # Create user
-docker exec headscale headscale users create myuser
+podman exec headscale headscale users create myuser
 
 # Generate pre-auth key
-docker exec headscale headscale preauthkeys create --user myuser --expiration 24h
+podman exec headscale headscale preauthkeys create --user myuser --expiration 24h
 
 # List nodes
-docker exec headscale headscale nodes list
+podman exec headscale headscale nodes list
 ```
 
 ## Tailscale Client Connection
@@ -101,7 +101,7 @@ Create `infra/headscale/acl.json`:
 Apply ACL:
 
 ```bash
-docker exec headscale headscale policy set --file /etc/headscale/acl.json
+podman exec headscale headscale policy set --file /etc/headscale/acl.json
 ```
 
 ## Troubleshooting
@@ -110,7 +110,7 @@ docker exec headscale headscale policy set --file /etc/headscale/acl.json
 
 ```bash
 # Check Headscale logs
-docker logs -f headscale
+podman logs -f headscale
 
 # Verify Tailscale status
 tailscale status

@@ -99,7 +99,7 @@ npm run backup
 ## Requirements
 
 - Node.js 22+
-- Docker (for Headscale)
+- Podman (for containers)
 - macOS / Linux
 
 ## License

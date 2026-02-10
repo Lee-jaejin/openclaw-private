@@ -12,11 +12,11 @@ sidebar_position: 5
 
 Headscale은 Tailscale 제어 서버의 자체 호스팅 구현입니다. Tailscale의 클라우드 서비스에 의존하지 않고 자체 프라이빗 WireGuard VPN 네트워크를 운영할 수 있습니다.
 
-## Docker 설치
+## Podman 설치
 
 ```bash
 cd infra/headscale
-docker-compose up -d
+podman compose up -d
 ```
 
 ### 설정 파일
@@ -45,13 +45,13 @@ dns_config:
 
 ```bash
 # 사용자 생성
-docker exec headscale headscale users create myuser
+podman exec headscale headscale users create myuser
 
 # 사전 인증 키 생성
-docker exec headscale headscale preauthkeys create --user myuser --expiration 24h
+podman exec headscale headscale preauthkeys create --user myuser --expiration 24h
 
 # 노드 목록
-docker exec headscale headscale nodes list
+podman exec headscale headscale nodes list
 ```
 
 ## Tailscale 클라이언트 연결
@@ -101,7 +101,7 @@ sudo tailscale up --login-server https://headscale.your-domain.com --authkey YOU
 ACL 적용:
 
 ```bash
-docker exec headscale headscale policy set --file /etc/headscale/acl.json
+podman exec headscale headscale policy set --file /etc/headscale/acl.json
 ```
 
 ## 문제 해결
@@ -110,7 +110,7 @@ docker exec headscale headscale policy set --file /etc/headscale/acl.json
 
 ```bash
 # Headscale 로그 확인
-docker logs -f headscale
+podman logs -f headscale
 
 # Tailscale 상태 확인
 tailscale status
