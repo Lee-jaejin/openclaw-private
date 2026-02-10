@@ -26,7 +26,14 @@ curl -fsSL https://ollama.com/install.sh | sh
 
 ```bash
 cd infra/ollama
-docker-compose up -d
+docker compose up -d
+```
+
+### Docker with NVIDIA GPU
+
+```bash
+cd infra/ollama
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
 ```
 
 ## Model Downloads

@@ -12,9 +12,6 @@
     "docs:build": "cd website && npm run build",
     "docs:serve": "cd website && npm run serve"
   },
-  "dependencies": {
-    "openclaw": "latest"
-  },
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/node": "^22.0.0"

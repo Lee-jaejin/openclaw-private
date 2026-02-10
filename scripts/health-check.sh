@@ -61,7 +61,23 @@ else
     check "Ollama Models" "no models found"
 fi
 
-# 5. Disk space (warn if <10GB free)
+# 5. OpenClaw container
+if docker ps --format '{{.Names}}' | grep -q "^openclaw$"; then
+    STATUS=$(docker inspect --format='{{.State.Status}}' openclaw)
+    if [[ "$STATUS" == "running" ]]; then
+        if curl -sf "http://localhost:18789/health" > /dev/null 2>&1; then
+            check "OpenClaw" "ok"
+        else
+            check "OpenClaw" "container running but API not responding"
+        fi
+    else
+        check "OpenClaw" "container status: $STATUS"
+    fi
+else
+    check "OpenClaw" "container not found"
+fi
+
+# 6. Disk space (warn if <10GB free)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     FREE_GB=$(df -g / | awk 'NR==2 {print $4}')
 else

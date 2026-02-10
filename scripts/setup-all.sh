@@ -24,15 +24,20 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
+HAS_DOCKER=false
+if command -v docker &> /dev/null; then
+    HAS_DOCKER=true
+fi
+
 echo ""
 echo "=== Step 1: Headscale ==="
-cd "$PROJECT_DIR/infra/headscale"
-if command -v docker &> /dev/null; then
+if [[ "$HAS_DOCKER" == true ]]; then
+    cd "$PROJECT_DIR/infra/headscale"
     echo "Starting Headscale container..."
     docker compose up -d
     echo "Headscale started on port 8080"
 else
-    echo "Docker not found. Please install Docker first."
+    echo "[SKIP] Docker not found. Headscale requires Docker."
     echo "  brew install --cask docker  # macOS"
     echo "  curl -fsSL https://get.docker.com | sh  # Linux"
 fi
@@ -66,20 +71,26 @@ echo "Downloading models..."
 bash "$PROJECT_DIR/infra/ollama/models.sh"
 
 echo ""
-echo "=== Step 4: OpenClaw ==="
-if command -v openclaw &> /dev/null; then
-    echo "OpenClaw already installed."
+echo "=== Step 4: OpenClaw (Container) ==="
+if [[ "$HAS_DOCKER" != true ]]; then
+    echo "[SKIP] Docker not found. OpenClaw container requires Docker."
+elif docker ps --format '{{.Names}}' | grep -q "^openclaw$"; then
+    echo "OpenClaw container already running."
 else
-    echo "Installing OpenClaw..."
-    npm install -g openclaw
+    echo "Building OpenClaw container..."
+    if docker compose build; then
+        echo "Starting OpenClaw container..."
+        docker compose up -d
+        echo "OpenClaw started on port 18789"
+    else
+        echo ""
+        echo "  [WARN] OpenClaw container build failed."
+        echo "  The 'openclaw' npm package may not be available yet."
+        echo "  Once available, build and start manually:"
+        echo "    cd $PROJECT_DIR/infra/openclaw && docker compose up -d --build"
+        echo ""
+    fi
 fi
-
-echo ""
-echo "Applying OpenClaw configuration..."
-OPENCLAW_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/openclaw"
-mkdir -p "$OPENCLAW_CONFIG_DIR"
-cp "$PROJECT_DIR/config/openclaw.json" "$OPENCLAW_CONFIG_DIR/config.json"
-echo "Configuration copied to $OPENCLAW_CONFIG_DIR/config.json"
 
 echo ""
 echo "============================================"
@@ -96,7 +107,4 @@ echo "     docker exec headscale headscale nodes register --user <username> --ke
 echo ""
 echo "  3. Run health check:"
 echo "     bash $SCRIPT_DIR/health-check.sh"
-echo ""
-echo "  4. Start OpenClaw:"
-echo "     openclaw"
 echo ""

@@ -57,5 +57,8 @@ echo "Size: $(du -h "$BACKUP_DIR/$TIMESTAMP.tar.gz" | cut -f1)"
 # Cleanup old backups (keep last 7)
 echo ""
 echo ">>> Cleaning old backups (keeping last 7)..."
-ls -t "$BACKUP_DIR"/*.tar.gz 2>/dev/null | tail -n +8 | xargs -r rm -f
+OLD_BACKUPS=$(ls -t "$BACKUP_DIR"/*.tar.gz 2>/dev/null | tail -n +8)
+if [[ -n "$OLD_BACKUPS" ]]; then
+    echo "$OLD_BACKUPS" | xargs rm -f
+fi
 echo "Done!"

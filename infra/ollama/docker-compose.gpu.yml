@@ -1,0 +1,14 @@
+version: "3.9"
+
+# GPU override — NVIDIA GPU 사용 시 함께 적용
+# Usage: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
