@@ -64,6 +64,6 @@ USER node
 EXPOSE 18789
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget -qO- http://localhost:18789/health || exit 1
+    CMD node -e "const s=require('net').connect(18789,'127.0.0.1');s.on('connect',()=>{s.end();process.exit(0)});s.on('error',()=>process.exit(1))"
 
 CMD ["node", "openclaw.mjs", "gateway", "--port", "18789", "--verbose"]

@@ -74,8 +74,8 @@ if podman ps --format '{{.Names}}' | grep -q "^openclaw$"; then
     OC_STATUS=$(podman inspect --format='{{.State.Status}}' openclaw)
     if [[ "$OC_STATUS" == "running" ]]; then
         echo -e "    Status: ${GREEN}Running${NC}"
-        OC_HEALTH=$(curl -sf "http://localhost:18789/health" 2>/dev/null && echo "healthy" || echo "unhealthy")
-        echo "    API: $OC_HEALTH"
+        OC_HEALTH=$( (echo > /dev/tcp/localhost/18789) 2>/dev/null && echo "reachable" || echo "unreachable")
+        echo "    Gateway: ws://localhost:18789 ($OC_HEALTH)"
         OC_UPTIME=$(podman inspect --format='{{.State.StartedAt}}' openclaw 2>/dev/null | cut -d'.' -f1 | tr 'T' ' ')
         echo "    Since: $OC_UPTIME"
     else

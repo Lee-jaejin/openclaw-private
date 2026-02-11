@@ -67,10 +67,11 @@ fi
 if podman ps -a --format '{{.Names}}' | grep -q "^openclaw$"; then
     STATUS=$(podman inspect --format='{{.State.Status}}' openclaw 2>/dev/null || echo "unknown")
     if [[ "$STATUS" == "running" ]]; then
-        if curl -sf "http://localhost:18789/health" > /dev/null 2>&1; then
-            check "OpenClaw" "ok"
+        # OpenClaw gateway uses WebSocket — check TCP port connectivity
+        if (echo > /dev/tcp/localhost/18789) 2>/dev/null; then
+            check "OpenClaw" "ok (gateway ws://localhost:18789)"
         else
-            check "OpenClaw" "container running but API not responding"
+            check "OpenClaw" "container running but port 18789 not reachable"
         fi
     elif [[ "$STATUS" == "exited" ]]; then
         EXIT_CODE=$(podman inspect --format='{{.State.ExitCode}}' openclaw 2>/dev/null || echo "?")
