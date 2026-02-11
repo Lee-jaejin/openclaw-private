@@ -10,11 +10,13 @@ sidebar_position: 8
 
 ## 모델 매핑
 
-| 작업 유형 | 모델 | 트리거 키워드 |
-|----------|------|--------------|
-| **coding** | CodeLlama 34B | code, function, bug, debug |
-| **reasoning** | Llama 3.3 70B | why, analyze, compare, logic |
-| **general** | Llama 3.3 | 기타 모든 요청 |
+기본 모델은 `plugins/model-router/src/index.ts`에서 설정. 작업 유형별로 다른 모델을 라우팅:
+
+| 작업 유형 | 트리거 키워드 |
+|----------|--------------|
+| **coding** | code, function, bug, debug |
+| **reasoning** | why, analyze, compare, logic |
+| **general** | 기타 모든 요청 |
 
 ## 사용법
 
@@ -23,7 +25,7 @@ import { selectModel, classifyTask } from "@openclaw-private/model-router";
 
 // 메시지 기반 모델 선택
 const model = selectModel("이 코드에서 버그를 찾아줘");
-// => "ollama/codellama:34b"
+// => coding 모델
 
 // 작업 분류만
 const taskType = classifyTask("왜 이렇게 동작하는지 설명해줘");
@@ -36,12 +38,12 @@ const taskType = classifyTask("왜 이렇게 동작하는지 설명해줘");
 
 ```typescript
 // 한국어 코딩 키워드
-const model = selectModel("이 코드에서 버그를 찾아줘");
-// => "ollama/codellama:34b"
+selectModel("이 코드에서 버그를 찾아줘");
+// => coding 모델
 
 // 한국어 추론 키워드
-const model = selectModel("왜 이렇게 동작하는지 분석해줘");
-// => "ollama/llama3.3:70b"
+selectModel("왜 이렇게 동작하는지 분석해줘");
+// => reasoning 모델
 ```
 
 ## 커스텀 설정
@@ -51,8 +53,8 @@ import { createModelRouter } from "@openclaw-private/model-router";
 
 const router = createModelRouter({
   models: {
-    coding: "ollama/codellama:13b", // 더 가벼운 모델
-    reasoning: "ollama/llama3.3:latest", // 70B 대신
+    coding: "ollama/<코딩-모델>",
+    reasoning: "ollama/<추론-모델>",
   },
   debug: true, // 디버그 로깅 활성화
 });
@@ -93,9 +95,9 @@ Model Router는 OpenClaw의 플러그인 시스템과 연동할 수 있습니다
       "enabled": true,
       "config": {
         "models": {
-          "coding": "ollama/codellama:34b",
-          "reasoning": "ollama/llama3.3:70b",
-          "general": "ollama/llama3.3:latest"
+          "coding": "ollama/<코딩-모델>",
+          "reasoning": "ollama/<추론-모델>",
+          "general": "ollama/<범용-모델>"
         }
       }
     }

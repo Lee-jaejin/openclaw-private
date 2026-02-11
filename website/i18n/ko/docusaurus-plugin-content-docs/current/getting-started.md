@@ -44,8 +44,7 @@ brew install ollama
 ollama serve
 
 # 모델 다운로드
-ollama pull codellama:34b
-ollama pull llama3.3:latest
+bash infra/ollama/models.sh
 ```
 
 ### 2단계: Headscale

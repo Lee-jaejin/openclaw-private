@@ -82,9 +82,8 @@ ollama --version
 # 새 버전 수동 확인
 # https://ollama.com/library
 
-# 모델 업데이트 (같은 이름으로 pull하면 최신 버전)
-ollama pull codellama:34b
-ollama pull llama3.3:latest
+# 전체 모델 업데이트
+bash infra/ollama/models.sh
 
 # 이전 버전 정리
 ollama list

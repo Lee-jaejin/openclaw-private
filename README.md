@@ -8,7 +8,7 @@ Self-hosted AI assistant infrastructure using:
 
 - **Headscale**: Self-hosted Tailscale coordination server
 - **Tailscale**: Mesh VPN for secure connectivity
-- **Ollama**: Local LLM server (Llama family models)
+- **Ollama**: Local LLM server
 - **OpenClaw**: AI assistant CLI
 
 ```
@@ -23,7 +23,7 @@ Self-hosted AI assistant infrastructure using:
 │                   │                                         │
 │            ┌──────▼──────┐                                  │
 │            │   Ollama    │                                  │
-│            │  (Llama 3)  │                                  │
+│            │ (Local LLM) │                                  │
 │            └──────┬──────┘                                  │
 │                   │                                         │
 │            ┌──────▼──────┐                                  │
@@ -73,13 +73,21 @@ openclaw-private/
 └── docs/                   # Architecture documentation
 ```
 
-## Models (Llama Family)
+## Ollama
 
-| Model | Purpose | Memory |
-|-------|---------|--------|
-| `llama3.3:latest` | General tasks | ~8GB |
-| `codellama:34b` | Coding tasks | ~20GB |
-| `llama3.3:70b` | Heavy reasoning | ~40GB (Q4) |
+Ollama를 호스트에 직접 설치하거나 컨테이너로 띄울 수 있다.
+
+```bash
+# 호스트 Ollama 사용 (기본)
+# .env에 OLLAMA_HOST=http://host.containers.internal:11434
+podman compose up
+
+# 컨테이너 Ollama 사용
+# .env에 OLLAMA_HOST=http://ollama:11434
+podman compose --profile with-ollama up
+```
+
+사용할 모델은 `infra/ollama/models.sh`에서, 라우팅 설정은 `config/openclaw.json`에서 관리한다.
 
 ## Scripts
 

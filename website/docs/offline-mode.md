@@ -23,8 +23,7 @@ Operating the Private AI System without internet access.
 
 ```bash
 # Download all required models
-ollama pull codellama:34b
-ollama pull llama3.3:latest
+bash infra/ollama/models.sh
 
 # Verify downloads
 ollama list
@@ -96,26 +95,17 @@ tailscale status
 
 `config/openclaw.json`:
 
+See `config/openclaw.json` for model configuration. In offline mode, ensure `baseUrl` points to local Ollama:
+
 ```json
 {
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "ollama/codellama:34b",
-        "fallbacks": [
-          "ollama/llama3.3:latest"
-        ]
-      }
-    }
-  },
   "models": {
     "providers": {
       "ollama": {
         "baseUrl": "http://localhost:11434/v1"
       }
     }
-  },
-  "offline": true
+  }
 }
 ```
 
@@ -158,7 +148,7 @@ podman images
 ping 8.8.8.8
 
 # 2. Update models (optional)
-ollama pull codellama:34b
+bash infra/ollama/models.sh
 
 # 3. Return to normal mode
 ```

@@ -88,29 +88,11 @@ networks:
 
 `config/openclaw.json`:
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "ollama/llama3.3:latest",
-        "fallbacks": ["ollama/codellama:34b"]
-      }
-    }
-  },
-  "models": {
-    "providers": {
-      "ollama": {
-        "baseUrl": "http://host.containers.internal:11434/v1"
-      }
-    }
-  },
-  "gateway": {
-    "port": 18789,
-    "bind": "0.0.0.0"
-  }
-}
-```
+See `config/openclaw.json` for the current configuration. Key settings:
+
+- `agents.defaults.model.primary` — Default model
+- `agents.defaults.model.fallbacks` — Fallback models
+- `models.providers.ollama.baseUrl` — Ollama endpoint
 
 ## Running
 

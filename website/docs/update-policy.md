@@ -82,9 +82,8 @@ ollama --version
 # Check for new versions manually
 # https://ollama.com/library
 
-# Update model (pull same name for latest)
-ollama pull codellama:34b
-ollama pull llama3.3:latest
+# Update all models
+bash infra/ollama/models.sh
 
 # Clean old versions
 ollama list

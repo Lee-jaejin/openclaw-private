@@ -16,11 +16,13 @@ services:
     environment:
       - TZ=Asia/Seoul
 
-  # === 로컬 LLM 서버 ===
+  # === 로컬 LLM 서버 (--profile with-ollama 로 활성화) ===
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
     restart: unless-stopped
+    profiles:
+      - with-ollama
     ports:
       - "11434:11434"
     volumes:
@@ -38,12 +40,10 @@ services:
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped
-    depends_on:
-      - ollama
     ports:
       - "18789:18789"
     environment:
-      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_HOST=${OLLAMA_HOST}
       - NODE_ENV=production
     env_file:
       - ./.env
@@ -54,6 +54,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    extra_hosts:
+      - "host.containers.internal:host-gateway"
 
 volumes:
   headscale-data:

@@ -72,7 +72,7 @@ sidebar_position: 2
 | 항목 | 설명 |
 |-----|------|
 | 역할 | 로컬 AI 추론 엔진 |
-| 모델 | llama3.3, codellama |
+| 모델 | `infra/ollama/models.sh` 참고 |
 | 포트 | 11434 (로컬 전용) |
 | 네트워크 | localhost 또는 VPN 내부 전용 |
 

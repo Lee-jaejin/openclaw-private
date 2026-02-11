@@ -106,30 +106,30 @@ describe("classifyTask", () => {
 
 describe("selectModel", () => {
   it("returns default coding model", () => {
-    assert.equal(selectModel("Fix the bug"), "ollama/codellama:34b");
+    assert.equal(selectModel("Fix the bug"), "ollama/starcoder2:15b");
   });
 
   it("returns default reasoning model", () => {
-    assert.equal(selectModel("Analyze this"), "ollama/llama3.3:70b");
+    assert.equal(selectModel("Analyze this"), "ollama/phi4:14b");
   });
 
   it("returns default general model", () => {
-    assert.equal(selectModel("Hello"), "ollama/llama3.3:latest");
+    assert.equal(selectModel("Hello"), "ollama/gpt-oss:20b");
   });
 
   it("uses custom models when provided", () => {
     const options: RouterOptions = {
-      models: { coding: "ollama/codellama:13b" },
+      models: { coding: "ollama/starcoder2:3b" },
     };
-    assert.equal(selectModel("Fix the bug", options), "ollama/codellama:13b");
+    assert.equal(selectModel("Fix the bug", options), "ollama/starcoder2:3b");
   });
 
   it("falls back to defaults for unspecified custom models", () => {
     const options: RouterOptions = {
-      models: { coding: "ollama/codellama:13b" },
+      models: { coding: "ollama/starcoder2:3b" },
     };
     // reasoning not overridden → default
-    assert.equal(selectModel("Analyze this", options), "ollama/llama3.3:70b");
+    assert.equal(selectModel("Analyze this", options), "ollama/phi4:14b");
   });
 });
 
@@ -139,9 +139,9 @@ describe("createModelRouter", () => {
     assert.equal(typeof router.selectModel, "function");
     assert.equal(typeof router.classifyTask, "function");
     assert.ok(router.models);
-    assert.equal(router.models.coding, "ollama/codellama:34b");
-    assert.equal(router.models.reasoning, "ollama/llama3.3:70b");
-    assert.equal(router.models.general, "ollama/llama3.3:latest");
+    assert.equal(router.models.coding, "ollama/starcoder2:15b");
+    assert.equal(router.models.reasoning, "ollama/phi4:14b");
+    assert.equal(router.models.general, "ollama/gpt-oss:20b");
   });
 
   it("merges custom models with defaults", () => {
@@ -149,13 +149,13 @@ describe("createModelRouter", () => {
       models: { general: "ollama/llama3.2:latest" },
     });
     assert.equal(router.models.general, "ollama/llama3.2:latest");
-    assert.equal(router.models.coding, "ollama/codellama:34b");
+    assert.equal(router.models.coding, "ollama/starcoder2:15b");
   });
 
   it("selectModel routes correctly", () => {
     const router = createModelRouter();
-    assert.equal(router.selectModel("Fix the bug"), "ollama/codellama:34b");
-    assert.equal(router.selectModel("왜 그래?"), "ollama/llama3.3:70b");
-    assert.equal(router.selectModel("Hello"), "ollama/llama3.3:latest");
+    assert.equal(router.selectModel("Fix the bug"), "ollama/starcoder2:15b");
+    assert.equal(router.selectModel("왜 그래?"), "ollama/phi4:14b");
+    assert.equal(router.selectModel("Hello"), "ollama/gpt-oss:20b");
   });
 });

@@ -23,8 +23,7 @@ sidebar_position: 10
 
 ```bash
 # 필요한 모든 모델 다운로드
-ollama pull codellama:34b
-ollama pull llama3.3:latest
+bash infra/ollama/models.sh
 
 # 다운로드 확인
 ollama list
@@ -96,26 +95,17 @@ tailscale status
 
 `config/openclaw.json`:
 
+현재 모델 설정은 `config/openclaw.json` 참고. 오프라인에서는 `baseUrl`이 로컬 Ollama를 가리키는지 확인:
+
 ```json
 {
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "ollama/codellama:34b",
-        "fallbacks": [
-          "ollama/llama3.3:latest"
-        ]
-      }
-    }
-  },
   "models": {
     "providers": {
       "ollama": {
         "baseUrl": "http://localhost:11434/v1"
       }
     }
-  },
-  "offline": true
+  }
 }
 ```
 
@@ -158,7 +148,7 @@ podman images
 ping 8.8.8.8
 
 # 2. 모델 업데이트 (선택)
-ollama pull codellama:34b
+bash infra/ollama/models.sh
 
 # 3. 정상 모드로 복귀
 ```

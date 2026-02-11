@@ -25,7 +25,7 @@
 |---------|------|------|
 | Headscale (VPN 코디네이터) | `infra/headscale/` | Podman Compose, ACL, DERP relay 설정 완비 |
 | Tailscale 클라이언트 | `infra/tailscale/` | macOS/Linux 자동 감지 설치 스크립트 |
-| Ollama (로컬 LLM) | `infra/ollama/` | Podman 설정 + 모델 다운로드 스크립트 (llama3.3, codellama) |
+| Ollama (로컬 LLM) | `infra/ollama/` | Podman 또는 호스트 설치, 모델 다운로드 스크립트 |
 | Model Router 플러그인 | `plugins/model-router/` | TypeScript, 한/영 키워드 기반 태스크 분류 및 모델 라우팅 |
 | 운영 스크립트 | `scripts/` | setup-all.sh, health-check.sh, monitor.sh, backup.sh |
 | 설정 파일 | `config/` | openclaw.json 모델 프로필 설정 |
@@ -47,7 +47,7 @@
 | 분류 | 기술 |
 |------|------|
 | 인프라 | Podman (데몬리스 컨테이너), WireGuard VPN (Headscale + Tailscale) |
-| AI/ML | Ollama, Llama 모델 전용 (llama3.3, codellama) |
+| AI/ML | Ollama (모델 목록은 `infra/ollama/models.sh` 참고) |
 | 플러그인 | TypeScript 5.0+, strict mode |
 | 런타임 | Node.js 22+ |
 | 문서 | Docusaurus 3.9.2, Markdown, i18n (EN/KO) |

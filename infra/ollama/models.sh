@@ -9,12 +9,12 @@ echo "=== Ollama Model Setup ==="
 echo "Ollama host: $OLLAMA_HOST"
 echo ""
 
-# Required models (Llama family only)
+# Required models
 MODELS=(
-    "llama3.3:latest"      # General purpose (default)
+    "gpt-oss:20b"          # General purpose (default)
+    "starcoder2:15b"       # Coding tasks
+    "phi4:14b"             # Reasoning tasks
     "llama3.2:latest"      # Fallback (smaller)
-    "codellama:34b"        # Coding tasks
-    # "llama3.3:70b"       # Heavy reasoning (uncomment if enough RAM)
 )
 
 for model in "${MODELS[@]}"; do
@@ -30,9 +30,9 @@ echo ""
 echo "=== Memory Usage Guide ==="
 echo "| Model           | VRAM/RAM Required |"
 echo "|-----------------|-------------------|"
-echo "| llama3.3        | ~8GB              |"
+echo "| gpt-oss:20b     | ~12GB             |"
+echo "| starcoder2:15b  | ~9GB              |"
+echo "| phi4:14b        | ~9GB              |"
 echo "| llama3.2        | ~4GB              |"
-echo "| codellama:34b   | ~20GB             |"
-echo "| llama3.3:70b    | ~40GB (Q4)        |"
 echo ""
 echo "Done!"

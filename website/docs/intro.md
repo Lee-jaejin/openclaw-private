@@ -31,13 +31,13 @@ This project provides a complete private AI infrastructure that:
 
 ## Model Strategy
 
-Uses Llama family models exclusively:
+Task-based routing with locally hosted models (see `config/openclaw.json` for current model list):
 
-| Task Type | Model | Use Case |
-|-----------|-------|----------|
-| **Coding** | CodeLlama 34B | Code generation, debugging |
-| **Reasoning** | Llama 3.3 70B | Analysis, complex logic |
-| **General** | Llama 3.3 | General conversation |
+| Task Type | Use Case |
+|-----------|----------|
+| **Coding** | Code generation, debugging |
+| **Reasoning** | Analysis, complex logic |
+| **General** | General conversation |
 
 ## Quick Start
 

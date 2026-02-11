@@ -49,7 +49,7 @@ free -h
 curl http://localhost:11434/api/ps
 
 # 더 작은 양자화 시도
-ollama pull codellama:34b-q4_0
+ollama pull <모델명>-q4_0
 
 # 디스크 공간 확인
 df -h ~/.ollama

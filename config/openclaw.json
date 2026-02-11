@@ -2,9 +2,8 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "ollama/llama3.3:latest",
+        "primary": "ollama/gpt-oss:20b",
         "fallbacks": [
-          "ollama/codellama:34b",
           "ollama/llama3.2:latest"
         ]
       }
@@ -17,9 +16,22 @@
         "apiKey": "${OLLAMA_API_KEY}",
         "api": "openai-completions",
         "models": [
-          "llama3.3:latest",
-          "codellama:34b",
-          "llama3.2:latest"
+          {
+            "id": "gpt-oss:20b",
+            "name": "gpt-oss:20b"
+          },
+          {
+            "id": "starcoder2:15b",
+            "name": "starcoder2:15b"
+          },
+          {
+            "id": "phi4:14b",
+            "name": "phi4:14b"
+          },
+          {
+            "id": "llama3.2:latest",
+            "name": "llama3.2:latest"
+          }
         ]
       }
     }

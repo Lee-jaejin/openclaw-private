@@ -1,7 +1,7 @@
 /**
  * Model Router Plugin
  *
- * Automatically routes requests to the most appropriate Llama model
+ * Automatically routes requests to the most appropriate model
  * based on task classification (coding, reasoning, general).
  */
 
@@ -17,9 +17,9 @@ export interface RouterOptions {
 }
 
 const DEFAULT_MODELS: ModelConfig = {
-  coding: "ollama/codellama:34b",
-  reasoning: "ollama/llama3.3:70b",
-  general: "ollama/llama3.3:latest",
+  coding: "ollama/starcoder2:15b",
+  reasoning: "ollama/phi4:14b",
+  general: "ollama/gpt-oss:20b",
 };
 
 // Keywords for task classification

@@ -31,16 +31,19 @@ podman compose up -d
 
 ## 모델 다운로드
 
+제공된 스크립트로 설정된 모델을 일괄 다운로드:
+
 ```bash
-# 코딩 작업용 CodeLlama
-ollama pull codellama:34b
+bash infra/ollama/models.sh
+```
 
-# 일반 및 추론용 Llama 3.3
-ollama pull llama3.3:latest
+또는 개별 모델 설치:
 
-# 선택: RAM 제한 시 더 가벼운 모델
-ollama pull codellama:13b
-ollama pull llama3.2:latest
+```bash
+ollama pull <모델명>
+
+# 설치된 모델 확인
+ollama list
 ```
 
 ## 설정
@@ -70,12 +73,15 @@ export OLLAMA_KEEP_ALIVE=5m
 
 ## 메모리 요구사항
 
-| 모델 | 필요 RAM | 양자화 |
-|-----|----------|--------|
-| CodeLlama 34B | 20GB+ | Q4_K_M |
-| Llama 3.3 70B | 40GB+ | Q4_K_M |
-| Llama 3.3 8B | 6GB+ | Q4_K_M |
-| CodeLlama 13B | 10GB+ | Q4_K_M |
+현재 모델 목록과 RAM 요구사항은 `infra/ollama/models.sh` 참고. 일반 가이드:
+
+| 모델 크기 | 필요 RAM | 양자화 |
+|----------|----------|--------|
+| ~7B | 4-6GB | Q4_K_M |
+| ~14B | 8-10GB | Q4_K_M |
+| ~20B | 12-14GB | Q4_K_M |
+| ~34B | 20GB+ | Q4_K_M |
+| ~70B | 40GB+ | Q4_K_M |
 
 ## API 사용
 
@@ -89,7 +95,7 @@ curl http://localhost:11434/api/tags
 
 ```bash
 curl http://localhost:11434/api/generate -d '{
-  "model": "llama3.3",
+  "model": "<모델명>",
   "prompt": "안녕하세요, 잘 지내시나요?"
 }'
 ```
@@ -98,7 +104,7 @@ curl http://localhost:11434/api/generate -d '{
 
 ```bash
 curl http://localhost:11434/api/chat -d '{
-  "model": "codellama:34b",
+  "model": "<모델명>",
   "messages": [
     {"role": "user", "content": "리스트를 정렬하는 Python 함수를 작성해줘"}
   ]
@@ -117,18 +123,17 @@ curl http://localhost:11434/api/ps
 df -h ~/.ollama
 
 # 제거 후 재다운로드
-ollama rm codellama:34b
-ollama pull codellama:34b
+ollama rm <모델명>
+ollama pull <모델명>
 ```
 
 ### 메모리 부족
 
 ```bash
 # 더 작은 양자화 사용
-ollama pull codellama:34b-q4_0
+ollama pull <모델명>-q4_0
 
-# 또는 더 작은 모델 사용
-ollama pull codellama:13b
+# 또는 config/openclaw.json에서 더 작은 모델로 변경
 ```
 
 ### 추론 느림

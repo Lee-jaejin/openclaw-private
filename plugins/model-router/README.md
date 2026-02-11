@@ -4,11 +4,13 @@ Multi-LLM routing plugin for task-based model selection.
 
 ## Model Mapping
 
-| Task Type | Model | Trigger Keywords |
-|-----------|-------|------------------|
-| **coding** | CodeLlama 34B | code, function, bug, debug |
-| **reasoning** | Llama 3.3 70B | why, analyze, compare, logic |
-| **general** | Llama 3.3 | all other requests |
+Default models are configured in `src/index.ts`. Routes by task type:
+
+| Task Type | Trigger Keywords |
+|-----------|------------------|
+| **coding** | code, function, bug, debug |
+| **reasoning** | why, analyze, compare, logic |
+| **general** | all other requests |
 
 ## Usage
 
@@ -17,7 +19,7 @@ import { selectModel, classifyTask } from "@openclaw-private/model-router";
 
 // Select model based on message
 const model = selectModel("Find the bug in this code");
-// => "ollama/codellama:34b"
+// => coding model from DEFAULT_MODELS
 
 // Classify task only
 const taskType = classifyTask("Why does this work that way?");
@@ -31,8 +33,8 @@ import { createModelRouter } from "@openclaw-private/model-router";
 
 const router = createModelRouter({
   models: {
-    coding: "ollama/codellama:13b", // lighter model
-    reasoning: "ollama/llama3.3:latest", // instead of 70B
+    coding: "ollama/<your-coding-model>",
+    reasoning: "ollama/<your-reasoning-model>",
   },
   debug: true, // enable debug logging
 });
@@ -53,6 +55,8 @@ npm run build
 ## 한국어 (Korean)
 
 ### 모델 매핑
-- **coding**: CodeLlama 34B - 코드, 함수, 버그, 디버그
-- **reasoning**: Llama 3.3 70B - 왜, 분석, 비교, 논리
-- **general**: Llama 3.3 - 기타 모든 요청
+
+기본 모델은 `src/index.ts`에서 설정. 작업 유형별 라우팅:
+- **coding**: 코드, 함수, 버그, 디버그
+- **reasoning**: 왜, 분석, 비교, 논리
+- **general**: 기타 모든 요청

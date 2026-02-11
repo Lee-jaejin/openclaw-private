@@ -10,11 +10,13 @@ Multi-LLM routing plugin for task-based model selection.
 
 ## Model Mapping
 
-| Task Type | Model | Trigger Keywords |
-|-----------|-------|------------------|
-| **coding** | CodeLlama 34B | code, function, bug, debug |
-| **reasoning** | Llama 3.3 70B | why, analyze, compare, logic |
-| **general** | Llama 3.3 | all other requests |
+Default models are configured in `plugins/model-router/src/index.ts`. Each task type routes to a different model:
+
+| Task Type | Trigger Keywords |
+|-----------|------------------|
+| **coding** | code, function, bug, debug |
+| **reasoning** | why, analyze, compare, logic |
+| **general** | all other requests |
 
 ## Usage
 
@@ -23,7 +25,7 @@ import { selectModel, classifyTask } from "@openclaw-private/model-router";
 
 // Select model based on message
 const model = selectModel("Find the bug in this code");
-// => "ollama/codellama:34b"
+// => coding model
 
 // Classify task only
 const taskType = classifyTask("Why does this work that way?");
@@ -36,12 +38,12 @@ The router supports Korean keywords:
 
 ```typescript
 // Korean coding keywords
-const model = selectModel("이 코드에서 버그를 찾아줘");
-// => "ollama/codellama:34b"
+selectModel("이 코드에서 버그를 찾아줘");
+// => coding model
 
 // Korean reasoning keywords
-const model = selectModel("왜 이렇게 동작하는지 분석해줘");
-// => "ollama/llama3.3:70b"
+selectModel("왜 이렇게 동작하는지 분석해줘");
+// => reasoning model
 ```
 
 ## Custom Configuration
@@ -51,8 +53,8 @@ import { createModelRouter } from "@openclaw-private/model-router";
 
 const router = createModelRouter({
   models: {
-    coding: "ollama/codellama:13b", // lighter model
-    reasoning: "ollama/llama3.3:latest", // instead of 70B
+    coding: "ollama/<your-coding-model>",
+    reasoning: "ollama/<your-reasoning-model>",
   },
   debug: true, // enable debug logging
 });
@@ -93,9 +95,9 @@ The model router can be integrated with OpenClaw's plugin system:
       "enabled": true,
       "config": {
         "models": {
-          "coding": "ollama/codellama:34b",
-          "reasoning": "ollama/llama3.3:70b",
-          "general": "ollama/llama3.3:latest"
+          "coding": "ollama/<coding-model>",
+          "reasoning": "ollama/<reasoning-model>",
+          "general": "ollama/<general-model>"
         }
       }
     }

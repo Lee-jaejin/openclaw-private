@@ -49,7 +49,7 @@ free -h
 curl http://localhost:11434/api/ps
 
 # Try smaller quantization
-ollama pull codellama:34b-q4_0
+ollama pull <model-name>-q4_0
 
 # Check disk space
 df -h ~/.ollama

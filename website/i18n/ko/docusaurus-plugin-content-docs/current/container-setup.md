@@ -88,29 +88,11 @@ networks:
 
 `config/openclaw.json`:
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "ollama/llama3.3:latest",
-        "fallbacks": ["ollama/codellama:34b"]
-      }
-    }
-  },
-  "models": {
-    "providers": {
-      "ollama": {
-        "baseUrl": "http://host.containers.internal:11434/v1"
-      }
-    }
-  },
-  "gateway": {
-    "port": 18789,
-    "bind": "0.0.0.0"
-  }
-}
-```
+현재 설정은 `config/openclaw.json` 참고. 주요 항목:
+
+- `agents.defaults.model.primary` — 기본 모델
+- `agents.defaults.model.fallbacks` — 대체 모델
+- `models.providers.ollama.baseUrl` — Ollama 엔드포인트
 
 ## 실행
 

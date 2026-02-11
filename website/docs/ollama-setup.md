@@ -38,16 +38,19 @@ podman compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
 
 ## Model Downloads
 
+Use the provided script to download all configured models:
+
 ```bash
-# CodeLlama for coding tasks
-ollama pull codellama:34b
+bash infra/ollama/models.sh
+```
 
-# Llama 3.3 for general and reasoning
-ollama pull llama3.3:latest
+Or pull models individually:
 
-# Optional: Lighter model for limited RAM
-ollama pull codellama:13b
-ollama pull llama3.2:latest
+```bash
+ollama pull <model-name>
+
+# Check installed models
+ollama list
 ```
 
 ## Configuration
@@ -77,12 +80,15 @@ export OLLAMA_KEEP_ALIVE=5m
 
 ## Memory Requirements
 
-| Model | RAM Required | Quantization |
-|-------|-------------|--------------|
-| CodeLlama 34B | 20GB+ | Q4_K_M |
-| Llama 3.3 70B | 40GB+ | Q4_K_M |
-| Llama 3.3 8B | 6GB+ | Q4_K_M |
-| CodeLlama 13B | 10GB+ | Q4_K_M |
+See `infra/ollama/models.sh` for the current model list and RAM requirements. General guideline:
+
+| Model Size | RAM Required | Quantization |
+|------------|-------------|--------------|
+| ~7B | 4-6GB | Q4_K_M |
+| ~14B | 8-10GB | Q4_K_M |
+| ~20B | 12-14GB | Q4_K_M |
+| ~34B | 20GB+ | Q4_K_M |
+| ~70B | 40GB+ | Q4_K_M |
 
 ## API Usage
 
@@ -96,7 +102,7 @@ curl http://localhost:11434/api/tags
 
 ```bash
 curl http://localhost:11434/api/generate -d '{
-  "model": "llama3.3",
+  "model": "<model-name>",
   "prompt": "Hello, how are you?"
 }'
 ```
@@ -105,7 +111,7 @@ curl http://localhost:11434/api/generate -d '{
 
 ```bash
 curl http://localhost:11434/api/chat -d '{
-  "model": "codellama:34b",
+  "model": "<model-name>",
   "messages": [
     {"role": "user", "content": "Write a Python function to sort a list"}
   ]
@@ -124,18 +130,17 @@ curl http://localhost:11434/api/ps
 df -h ~/.ollama
 
 # Remove and re-download
-ollama rm codellama:34b
-ollama pull codellama:34b
+ollama rm <model-name>
+ollama pull <model-name>
 ```
 
 ### Out of Memory
 
 ```bash
 # Use smaller quantization
-ollama pull codellama:34b-q4_0
+ollama pull <model-name>-q4_0
 
-# Or use smaller model
-ollama pull codellama:13b
+# Or switch to a smaller model in config/openclaw.json
 ```
 
 ### Slow Inference

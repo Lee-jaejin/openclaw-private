@@ -72,7 +72,7 @@ Design documentation for a fully private AI messaging system.
 | Item | Description |
 |------|-------------|
 | Role | Local AI inference engine |
-| Models | llama3.3, codellama |
+| Models | See `infra/ollama/models.sh` |
 | Port | 11434 (local only) |
 | Network | localhost or VPN internal only |
 
