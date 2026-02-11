@@ -35,8 +35,9 @@ services:
   # === AI 어시스턴트 ===
   openclaw:
     build:
-      context: ./openclaw
-      dockerfile: ./infra/openclaw/Dockerfile
+      context: ./infra/openclaw
+      args:
+        OPENCLAW_VERSION: ${OPENCLAW_VERSION:-2026.1.29}
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped

@@ -3,8 +3,9 @@ version: "3.9"
 services:
   openclaw:
     build:
-      context: ../../openclaw
-      dockerfile: ../../infra/openclaw/Dockerfile
+      context: .
+      args:
+        OPENCLAW_VERSION: ${OPENCLAW_VERSION:-2026.1.29}
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped

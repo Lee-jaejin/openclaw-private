@@ -78,17 +78,22 @@ if [[ "$HAS_PODMAN" != true ]]; then
 elif podman ps --format '{{.Names}}' | grep -q "^openclaw$"; then
     echo "OpenClaw container already running."
 else
-    echo "Building OpenClaw container..."
-    if podman compose build; then
+    # .env에서 버전 읽기 (없으면 기본값)
+    OPENCLAW_VERSION="${OPENCLAW_VERSION:-2026.1.29}"
+    if [[ -f "$PROJECT_DIR/.env" ]]; then
+        OPENCLAW_VERSION=$(grep -oP '^OPENCLAW_VERSION=\K.*' "$PROJECT_DIR/.env" 2>/dev/null || echo "$OPENCLAW_VERSION")
+    fi
+    echo "Building OpenClaw container (v${OPENCLAW_VERSION})..."
+    cd "$PROJECT_DIR"
+    if podman compose build --build-arg "OPENCLAW_VERSION=${OPENCLAW_VERSION}"; then
         echo "Starting OpenClaw container..."
-        podman compose up -d
+        podman compose up -d openclaw
         echo "OpenClaw started on port 18789"
     else
         echo ""
         echo "  [WARN] OpenClaw container build failed."
-        echo "  The 'openclaw' npm package may not be available yet."
-        echo "  Once available, build and start manually:"
-        echo "    cd $PROJECT_DIR/infra/openclaw && podman compose up -d --build"
+        echo "  Check network connectivity and OPENCLAW_VERSION in .env"
+        echo "  Manual build: podman compose build --build-arg OPENCLAW_VERSION=<version>"
         echo ""
     fi
 fi
