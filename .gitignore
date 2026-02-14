@@ -30,6 +30,10 @@ logs/
 # Private docs
 docs/CLAUDE_MD_GUIDE.md
 
+# Claude Code
+CLAUDE.local.md
+.claude/agent-memory-local/
+
 # Cache
 .cache/
 .npm/

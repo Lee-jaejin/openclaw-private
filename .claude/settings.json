@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATHS\" | grep -q '\\.sh$'; then shellcheck $CLAUDE_FILE_PATHS 2>&1; fi",
+            "statusMessage": "Running shellcheck..."
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATHS\" | grep -q '\\.ts$'; then pnpm exec tsc --noEmit 2>&1; fi",
+            "statusMessage": "Running tsc --noEmit..."
+          }
+        ]
+      }
+    ]
+  }
+}

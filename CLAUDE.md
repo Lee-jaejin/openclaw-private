@@ -52,11 +52,8 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 - Shell 스크립트는 `set -euo pipefail` 사용
 - TypeScript는 strict mode
 - 문서는 한/영 i18n 구조를 따른다
-- 코드 작성, 테스트, 도구 선택, 보안 패턴은 @CONVENTIONS.md 참조
-
-## Workflow
-
 - 구성요소 상태, 기술 스택, TODO가 변경되면 @STATUS.md 도 함께 업데이트할 것
+- 코드 작성, 테스트, 도구 선택, 보안 패턴은 @CONVENTIONS.md 참조
 
 ## Do NOT
 
@@ -74,14 +71,10 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 
 커밋 작성 시 @COMMITS.md 참조. 영문, Conventional Commits 형식.
 
-## Quick Reference
+## Compaction
 
-```
-인프라:   Podman (rootless) + Headscale VPN
-AI:      Ollama (호스트) + 동적 모델 설정
-플러그인: TypeScript strict + Node.js 22
-패키지:   pnpm 9+
-스크립트: Bash (set -euo pipefail)
-보안:    VPN 필수 + 컨테이너 격리 + 로컬 추론
-문서:    Docusaurus 3.x + i18n (KO/EN)
-```
+When compacting, always preserve:
+- Architecture Principles (Rule 1~4) — 이 프로젝트의 핵심 제약 조건
+- 변경된 파일 전체 목록과 각 파일의 변경 이유
+- 실행한 테스트/검증 명령어와 결과
+- 현재 작업의 목표와 진행 상황
