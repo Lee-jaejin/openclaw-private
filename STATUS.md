@@ -35,7 +35,7 @@
 
 | 구성요소 | 상태 | 설명 |
 |---------|------|------|
-| OpenClaw 앱 본체 | 부분 구현 | 컨테이너 인프라 구축 완료 (`infra/openclaw/`), openclaw npm 패키지 배포 대기 |
+| OpenClaw 앱 본체 | 부분 구현 | 컨테이너 인프라 구축 완료 (`infra/openclaw/`), npm 패키지 의존성으로 전환 |
 | 테스트 코드 | 부분 구현 | Model Router 테스트 완료 (44건), 추가 컴포넌트 테스트 필요 |
 | GPU 가속 | 완료 | `docker-compose.gpu.yml` override 파일로 토글 가능 |
 | 70B 모델 지원 | 주석 처리 | RAM 40GB+ 필요, models.sh에서 주석 처리 |
@@ -98,7 +98,7 @@ openclaw-private/
 ## 다음 단계 (TODO)
 
 - [x] OpenClaw 컨테이너 격리 환경 구축 (`infra/openclaw/`)
-- [ ] OpenClaw npm 패키지 배포 후 컨테이너 빌드 검증
+- [x] OpenClaw npm 패키지 의존성으로 전환
 - [x] Model Router 플러그인 테스트 코드 작성 (44건 pass)
 - [x] NVIDIA GPU 가속 override 파일 분리 (`docker-compose.gpu.yml`)
 - [ ] 70B 모델 지원 검증 (충분한 RAM 확보 시)
