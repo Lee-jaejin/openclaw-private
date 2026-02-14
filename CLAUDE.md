@@ -19,6 +19,16 @@ scripts/                  → 운영 스크립트
 website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 ```
 
+## Architecture Principles
+
+**Rule 1: 네트워크 격리** — 모든 디바이스 간 통신은 WireGuard VPN 터널 내에서만 허용한다.
+
+**Rule 2: 컨테이너 최소 권한** — `--cap-drop ALL`, `--security-opt no-new-privileges`, rootless 모드를 기본으로 한다.
+
+**Rule 3: 외부 의존성 제로** — CDN, 클라우드 API, SaaS를 사용하지 않는다. 모든 구성요소는 오프라인에서 동작해야 한다.
+
+**Rule 4: 데이터 로컬 유지** — LLM 추론 데이터, 사용자 데이터 모두 로컬에서만 처리하고 외부로 전송하지 않는다.
+
 ## Design Decisions
 
 - **Podman > Docker**: 데몬리스, rootless → 폐쇄망에서 보안 우위
@@ -42,6 +52,7 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 - Shell 스크립트는 `set -euo pipefail` 사용
 - TypeScript는 strict mode
 - 문서는 한/영 i18n 구조를 따른다
+- 코드 작성, 테스트, 도구 선택, 보안 패턴은 @CONVENTIONS.md 참조
 
 ## Workflow
 
@@ -61,4 +72,16 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 
 ## Commits
 
-영문 작성. 타입 접두사: `feat:`, `fix:`, `infra:`, `docs:`, `refactor:`, `test:`
+커밋 작성 시 @COMMITS.md 참조. 영문, Conventional Commits 형식.
+
+## Quick Reference
+
+```
+인프라:   Podman (rootless) + Headscale VPN
+AI:      Ollama (호스트) + 동적 모델 설정
+플러그인: TypeScript strict + Node.js 22
+패키지:   pnpm 9+
+스크립트: Bash (set -euo pipefail)
+보안:    VPN 필수 + 컨테이너 격리 + 로컬 추론
+문서:    Docusaurus 3.x + i18n (KO/EN)
+```
