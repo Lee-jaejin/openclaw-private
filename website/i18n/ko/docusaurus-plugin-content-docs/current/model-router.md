@@ -80,8 +80,8 @@ const model = router.selectModel("이 함수를 구현해줘");
 
 ```bash
 cd plugins/model-router
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 ## OpenClaw 연동

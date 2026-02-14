@@ -42,7 +42,7 @@ podman save openclaw:local -o ~/backups/openclaw-local.tar
 ### 3. Cache Dependencies
 
 ```bash
-# npm package cache (if needed)
+# pnpm package cache (if needed)
 cd ~/Study/ai/openclaw
 pnpm install --offline
 ```

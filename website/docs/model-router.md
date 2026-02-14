@@ -80,8 +80,8 @@ Korean: `왜`, `분석`, `비교`, `설명`, `이유`, `논리`, `생각`, `평�
 
 ```bash
 cd plugins/model-router
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 ## Integration with OpenClaw

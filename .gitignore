@@ -33,3 +33,4 @@ docs/CLAUDE_MD_GUIDE.md
 # Cache
 .cache/
 .npm/
+.pnpm-store/

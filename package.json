@@ -8,9 +8,12 @@
     "backup": "bash scripts/backup.sh",
     "monitor": "bash scripts/monitor.sh",
     "health": "bash scripts/health-check.sh",
-    "docs:dev": "cd website && npm start",
-    "docs:build": "cd website && npm run build",
-    "docs:serve": "cd website && npm run serve"
+    "route:exit-node": "bash scripts/route-via-exit-node.sh",
+    "audit:egress": "bash scripts/audit-egress.sh",
+    "audit:cron": "bash scripts/setup-audit-cron.sh",
+    "docs:dev": "pnpm --filter website start",
+    "docs:build": "pnpm --filter website build",
+    "docs:serve": "pnpm --filter website serve"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

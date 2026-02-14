@@ -1,6 +1,6 @@
 # OpenClaw Private - 프로젝트 진행 상황
 
-> 최종 업데이트: 2026-02-10
+> 최종 업데이트: 2026-02-14
 > 버전: 0.1.0 (초기 단계)
 
 ## 프로젝트 개요
@@ -35,7 +35,7 @@
 
 | 구성요소 | 상태 | 설명 |
 |---------|------|------|
-| OpenClaw 앱 본체 | 부분 구현 | 컨테이너 인프라 구축 완료 (`infra/openclaw/`), npm 패키지 의존성으로 전환 |
+| OpenClaw 앱 본체 | 부분 구현 | 컨테이너 인프라 구축 완료 (`infra/openclaw/`), pnpm 패키지 의존성으로 전환 |
 | 테스트 코드 | 부분 구현 | Model Router 테스트 완료 (44건), 추가 컴포넌트 테스트 필요 |
 | GPU 가속 | 완료 | `docker-compose.gpu.yml` override 파일로 토글 가능 |
 | 70B 모델 지원 | 주석 처리 | RAM 40GB+ 필요, models.sh에서 주석 처리 |
@@ -49,6 +49,7 @@
 | 인프라 | Podman (데몬리스 컨테이너), WireGuard VPN (Headscale + Tailscale) |
 | AI/ML | Ollama (모델 목록은 `infra/ollama/models.sh` 참고) |
 | 플러그인 | TypeScript 5.0+, strict mode |
+| 패키지 매니저 | pnpm 9+ (워크스페이스, 하드링크 기반) |
 | 런타임 | Node.js 22+ |
 | 문서 | Docusaurus 3.9.2, Markdown, i18n (EN/KO) |
 | DB | SQLite3 (Headscale용) |

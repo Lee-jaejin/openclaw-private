@@ -13,7 +13,7 @@ RUN apt-get update \
         openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g "openclaw@${OPENCLAW_VERSION}"
+RUN corepack enable pnpm && pnpm add -g "openclaw@${OPENCLAW_VERSION}"
 
 RUN mkdir -p /home/node/.openclaw/sessions /home/node/.ssh \
     && chown -R node:node /home/node/.openclaw /home/node/.ssh

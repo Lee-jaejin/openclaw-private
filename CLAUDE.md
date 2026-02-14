@@ -12,7 +12,7 @@
 config/openclaw.json      → 모델 프로필 설정
 infra/headscale/          → VPN 코디네이터 (Podman)
 infra/ollama/             → 로컬 LLM 서버 (Podman 또는 호스트)
-infra/openclaw/           → OpenClaw 앱 컨테이너 (npm 패키지 의존성)
+infra/openclaw/           → OpenClaw 앱 컨테이너 (pnpm 패키지 의존성)
 infra/tailscale/          → VPN 클라이언트 설치 스크립트
 plugins/model-router/src/ → 태스크→모델 라우팅 (TypeScript)
 scripts/                  → 운영 스크립트
@@ -28,11 +28,11 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 
 ## Commands
 
-- `npm run setup` — 전체 인프라 설치
-- `npm run health` — 헬스 체크
-- `npm run monitor` — 실시간 모니터링
-- `npm run backup` — 백업 (7개 보관)
-- `npm run docs:dev` — 문서 사이트 로컬 개발
+- `pnpm setup` — 전체 인프라 설치
+- `pnpm health` — 헬스 체크
+- `pnpm monitor` — 실시간 모니터링
+- `pnpm backup` — 백업 (7개 보관)
+- `pnpm docs:dev` — 문서 사이트 로컬 개발
 - `node --test plugins/model-router/src/**/*.test.ts` — Model Router 테스트
 
 ## Rules
@@ -56,8 +56,8 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 ## Verification
 
 - 코드 변경 후: `node --test` (해당 모듈)
-- 인프라 변경 후: `npm run health`
-- 타입 체크: `npx tsc --noEmit`
+- 인프라 변경 후: `pnpm health`
+- 타입 체크: `pnpm exec tsc --noEmit`
 
 ## Commits
 

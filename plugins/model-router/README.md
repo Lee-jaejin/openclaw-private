@@ -46,8 +46,8 @@ const model = router.selectModel("Implement this function");
 
 ```bash
 cd plugins/model-router
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 ---

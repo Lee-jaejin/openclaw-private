@@ -42,7 +42,7 @@ podman save openclaw:local -o ~/backups/openclaw-local.tar
 ### 3. 의존성 캐시
 
 ```bash
-# npm 패키지 캐시 (필요시)
+# pnpm 패키지 캐시 (필요시)
 cd ~/Study/ai/openclaw
 pnpm install --offline
 ```

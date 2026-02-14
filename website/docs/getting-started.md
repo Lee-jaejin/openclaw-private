@@ -65,8 +65,8 @@ podman compose up -d
 
 ```bash
 cd plugins/model-router
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 ## Verify Installation
