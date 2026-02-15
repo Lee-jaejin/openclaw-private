@@ -2,17 +2,18 @@
   "acls": [
     {
       "action": "accept",
-      "src": ["*"],
-      "dst": ["*:*"]
+      "src": ["autogroup:member"],
+      "dst": ["autogroup:internet:*"]
+    },
+    {
+      "action": "accept",
+      "src": ["autogroup:member"],
+      "dst": [
+        "*:8080",
+        "*:9090",
+        "*:11434",
+        "*:18789"
+      ]
     }
-  ],
-  "tagOwners": {
-    "tag:server": ["autogroup:admin"],
-    "tag:client": ["autogroup:admin"]
-  },
-  "autoApprovers": {
-    "routes": {
-      "0.0.0.0/0": ["autogroup:admin"]
-    }
-  }
+  ]
 }

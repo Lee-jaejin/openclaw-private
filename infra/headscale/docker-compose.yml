@@ -2,18 +2,29 @@ version: "3.9"
 
 services:
   headscale:
-    image: headscale/headscale:latest
+    image: docker.io/headscale/headscale@sha256:51b1b9182bb6219e97374fa89af6b9320d6f87ecc739e328d5357ea4fa7a5ce3
     container_name: headscale
     restart: unless-stopped
     ports:
-      - "8080:8080"      # Web UI / API
-      - "9090:9090"      # Metrics
+      - "127.0.0.1:8080:8080"      # Web UI / API
+      - "127.0.0.1:9090:9090"      # Metrics
+      - "127.0.0.1:3478:3478/udp"  # STUN (DERP NAT traversal)
     volumes:
-      - ./config:/etc/headscale
+      - ./config/config.yaml:/etc/headscale/config.yaml:ro
+      - ./acl.json:/etc/headscale/acl.json:ro
+      - ./certs:/etc/headscale/certs:ro
       - headscale-data:/var/lib/headscale
     command: serve
     environment:
       - TZ=Asia/Seoul
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/headscale
 
 volumes:
   headscale-data:

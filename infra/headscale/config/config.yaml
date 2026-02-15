@@ -1,7 +1,7 @@
 # Headscale configuration for OpenClaw Private
 # https://github.com/juanfont/headscale
 
-server_url: http://127.0.0.1:8080
+server_url: https://192.168.64.1:8080
 listen_addr: 0.0.0.0:8080
 metrics_listen_addr: 0.0.0.0:9090
 grpc_listen_addr: 0.0.0.0:50443
@@ -21,6 +21,10 @@ database:
     path: /var/lib/headscale/db.sqlite
     write_ahead_log: true
 
+policy:
+  mode: file
+  path: /etc/headscale/acl.json
+
 dns:
   magic_dns: true
   base_domain: openclaw.private
@@ -36,6 +40,8 @@ log:
 
 unix_socket: /var/run/headscale/headscale.sock
 unix_socket_permission: "0770"
+tls_cert_path: /etc/headscale/certs/headscale.crt
+tls_key_path: /etc/headscale/certs/headscale.key
 
 # DERP (Designated Encrypted Relay for Packets)
 # 폐쇄망에서는 외부 DERP 서버 대신 내장 DERP 사용
@@ -50,8 +56,8 @@ derp:
     region_id: 999
     region_code: "local"
     region_name: "OpenClaw Private"
+    verify_clients: true
     stun_listen_addr: 0.0.0.0:3478
     private_key_path: /var/lib/headscale/derp_server_private.key
     automatically_add_embedded_derp_region: true
-    ipv4: 127.0.0.1
-    ipv6: "::1"
+    ipv4: 192.168.64.1
