@@ -116,3 +116,21 @@ cap_drop:
 - `.env.example`에 템플릿만 유지
 - 로그에 민감정보(키, 토큰, 패스워드) 출력 금지
 
+### 커밋 전 민감정보 자동 점검
+
+AI 에이전트는 커밋 전 아래 패턴을 diff에서 검출한다. 해당 시 커밋 중단 후 수정.
+
+| 패턴 | 예시 | 조치 |
+|------|------|------|
+| 하드코딩된 사용자명/호스트명 | `IMSG_SSH_USER=jaejin` | `${IMSG_SSH_USER}`로 교체, `.env.example`에 추가 |
+| 실제 토큰/키 값 | `token: "86fb3e..."` | `${ENV_VAR}` 참조로 교체 |
+| 환경 특정 타임스탬프 | `lastRunAt: "2026-..."` | 커밋 시 `{}` 로 비움 |
+| SSH 키 파일 | `~/.openclaw/keys/*` | `.gitignore` 확인, 절대 커밋 불가 |
+| 내부 IP 주소 | `100.64.x.x`, `192.168.x.x` | 환경변수 또는 설정 파일로 분리 |
+
+```bash
+# 커밋 전 점검 명령
+git diff --cached | grep -iE '(token|key|password|secret)=' | grep -v '\${'
+git diff --cached | grep -iE '(jaejin|MacBook|192\.168|100\.64)'
+```
+

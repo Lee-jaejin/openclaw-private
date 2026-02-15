@@ -91,11 +91,13 @@ services:
         condition: service_healthy
     networks:
       - openclaw-internal
+      - host-access
     ports:
       - "127.0.0.1:18789:18789"
     environment:
       - OLLAMA_HOST=${OLLAMA_HOST}
       - NODE_ENV=production
+      - IMSG_SSH_USER=${IMSG_SSH_USER}
       - HTTP_PROXY=${OPENCLAW_EGRESS_PROXY:-http://egress-proxy:3128}
       - HTTPS_PROXY=${OPENCLAW_EGRESS_PROXY:-http://egress-proxy:3128}
       - ALL_PROXY=${OPENCLAW_EGRESS_PROXY:-http://egress-proxy:3128}
@@ -105,6 +107,8 @@ services:
     volumes:
       - ./config/openclaw.json:/home/node/.openclaw/openclaw.json:ro
       - openclaw-sessions:/home/node/.openclaw/sessions
+      - ~/.openclaw/keys/openclaw_imsg:/home/node/.ssh/openclaw_imsg:ro
+      - ./scripts/imsg-host:/usr/local/bin/imsg:ro
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -119,6 +123,8 @@ networks:
   openclaw-internal:
     driver: bridge
     internal: true
+  host-access:
+    driver: bridge
 
 volumes:
   headscale-data:

@@ -63,6 +63,22 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 - 구성요소 상태, 기술 스택, TODO가 변경되면 @STATUS.md 도 함께 업데이트할 것
 - 코드 작성, 테스트, 도구 선택, 보안 패턴은 @CONVENTIONS.md 참조
 
+## Sensitive Data Review
+
+커밋 전 반드시 아래 항목을 자동 점검한다. 하나라도 해당되면 커밋을 중단하고 수정한다.
+
+- **하드코딩된 사용자명/호스트명**: `docker-compose.yml`, 스크립트에 개인 사용자명(`jaejin` 등), 호스트명이 직접 들어가면 환경변수(`${VAR}`)로 교체
+- **토큰/키/비밀번호**: 설정 파일에 실제 값이 들어가면 `${ENV_VAR}` 참조로 교체. `.env.example`에 템플릿 추가
+- **타임스탬프/로컬 경로**: `openclaw.json`의 `wizard`, `meta` 등 환경 특정 값은 커밋 시 비움 (`{}`)
+- **SSH 키**: `~/.openclaw/keys/` 하위 파일은 절대 커밋하지 않음. `.gitignore` 확인
+- **IP 주소**: 내부 VPN IP, Tailscale IP가 하드코딩되지 않았는지 확인
+
+점검 명령:
+```bash
+git diff --cached | grep -iE '(token|key|password|secret)=' | grep -v '\${'
+git diff --cached | grep -iE '(jaejin|MacBook|192\.168|100\.64)'
+```
+
 ## Do NOT
 
 - `.env` 파일을 커밋하거나 내용을 출력하지 말 것

@@ -1,0 +1,39 @@
+#!/bin/bash
+# SSH forced-command wrapper for imsg.
+# Runs on the HOST — referenced from authorized_keys.
+# Rejects shell injection, validates the binary, logs every call.
+set -euo pipefail
+
+ALLOWED_BIN="/opt/homebrew/bin/imsg"
+LOG_DIR="${HOME}/.openclaw/logs"
+LOG_FILE="${LOG_DIR}/imsg-audit.log"
+
+mkdir -p "${LOG_DIR}"
+
+# Reject interactive login
+if [[ -z "${SSH_ORIGINAL_COMMAND:-}" ]]; then
+    echo "ERROR: Interactive login not permitted" >&2
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') REJECTED interactive-login" >> "${LOG_FILE}"
+    exit 1
+fi
+
+# Reject shell metacharacters (injection prevention)
+FORBIDDEN_PATTERN='[;|&`$()<>]'
+if [[ "${SSH_ORIGINAL_COMMAND}" =~ ${FORBIDDEN_PATTERN} ]]; then
+    echo "ERROR: Forbidden characters in command" >&2
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') REJECTED metachar ${SSH_ORIGINAL_COMMAND}" >> "${LOG_FILE}"
+    exit 1
+fi
+
+# Validate command starts with allowed binary
+if [[ "${SSH_ORIGINAL_COMMAND}" != "${ALLOWED_BIN}" && "${SSH_ORIGINAL_COMMAND}" != "${ALLOWED_BIN} "* ]]; then
+    echo "ERROR: Only imsg commands are allowed" >&2
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') REJECTED unauthorized ${SSH_ORIGINAL_COMMAND}" >> "${LOG_FILE}"
+    exit 1
+fi
+
+# Audit log
+echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') OK ${SSH_ORIGINAL_COMMAND}" >> "${LOG_FILE}"
+
+# Execute (safe: metacharacters already rejected)
+exec ${SSH_ORIGINAL_COMMAND}

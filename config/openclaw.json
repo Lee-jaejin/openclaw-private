@@ -1,4 +1,7 @@
 {
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
   "agents": {
     "defaults": {
       "model": {
@@ -6,7 +9,15 @@
         "fallbacks": [
           "ollama/llama3.2:latest"
         ]
-      }
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "workspace": "/home/node/.openclaw/workspace"
     }
   },
   "models": {
@@ -36,12 +47,37 @@
       }
     }
   },
-  "channels": {},
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "channels": {
+    "imessage": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist"
+    }
+  },
+  "plugins": {
+    "entries": {
+      "imessage": {
+        "enabled": true
+      }
+    }
+  },
   "gateway": {
     "mode": "local",
     "auth": {
       "mode": "token",
       "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    },
+    "port": 18789,
+    "bind": "tailnet",
+    "tailscale": {
+      "mode": "serve",
+      "resetOnExit": true
     }
-  }
+  },
+  "wizard": {},
+  "meta": {}
 }
