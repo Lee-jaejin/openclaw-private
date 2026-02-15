@@ -29,6 +29,14 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 
 **Rule 4: 데이터 로컬 유지** — LLM 추론 데이터, 사용자 데이터 모두 로컬에서만 처리하고 외부로 전송하지 않는다.
 
+## Behavior
+
+- 모호한 요청 시 가정을 명시하고, 구현 전 확인
+- 요청한 기능만 구현. 조기 추상화, 미래 대비 코드 금지
+- 변경한 모든 줄이 요청과 직접 연결. 주변 코드 리팩토링 금지
+- 작업 시작 전 성공 기준 정의. 각 단계 독립 검증
+- 행동 원칙 상세: @principles/README.md
+
 ## Design Decisions
 
 - **Podman > Docker**: 데몬리스, rootless → 폐쇄망에서 보안 우위
@@ -70,6 +78,17 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 ## Commits
 
 커밋 작성 시 @COMMITS.md 참조. 영문, Conventional Commits 형식.
+
+## Quick Reference
+
+```
+컨테이너:  Podman (rootless)
+네트워크:  WireGuard VPN (Headscale + Tailscale)
+LLM:      Ollama (호스트)
+스크립트:  Bash + set -euo pipefail
+패키지:    pnpm 9+
+런타임:    Node.js 22+
+```
 
 ## Compaction
 

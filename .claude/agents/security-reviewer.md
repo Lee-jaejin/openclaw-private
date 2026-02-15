@@ -3,6 +3,7 @@ name: security-reviewer
 description: 폐쇄망 프로젝트의 보안 취약점을 리뷰한다. 수동 호출 전용.
 tools: Read, Grep, Glob, Bash
 model: sonnet
+permissionMode: dontAsk
 memory: project
 maxTurns: 20
 ---

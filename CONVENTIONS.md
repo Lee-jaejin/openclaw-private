@@ -29,6 +29,40 @@ Readability > Simplicity > Performance
 | 하드코딩된 IP/포트 | 환경변수 또는 설정 파일로 관리 |
 | 외부 네트워크 호출 | 오프라인 환경에서 동작 불가 |
 | root 권한 실행 | rootless 원칙 위반 |
+| Drive-by 리팩토링 | 버그 수정 시 주변 스크립트 정리/개선 금지 |
+| Style drift | 기존 스크립트 스타일(변수명, 함수명) 변경 금지 |
+
+### ❌/✅ 예시
+
+**Over-engineering** — "헬스 체크 스크립트 만들어줘"
+
+```bash
+# ❌ 플러그인 시스템 + 알림 + 대시보드 연동
+declare -A HEALTH_PLUGINS
+register_plugin() { ... }
+notify_slack() { ... }
+update_dashboard() { ... }
+
+# ✅ 단순 스크립트
+#!/bin/bash
+set -euo pipefail
+curl -sf http://localhost:8080/health || exit 1
+```
+
+**Drive-by 리팩토링** — "백업 스크립트에서 경로 오류 수정해줘"
+
+```diff
+# ❌ 변수명 변경 + 로깅 추가 + 에러 핸들링 강화까지
+-backup_dir="/data/backup"
++BACKUP_DIR="/data/backup"  # 네이밍 변경 — 요청 안 함
++log "Starting backup to ${BACKUP_DIR}"  # 요청 안 함
+
+# ✅ 경로만 수정
+-backup_dir="/data/backu"
++backup_dir="/data/backup"
+```
+
+> 상세 예시와 원칙: @principles/README.md
 
 ## Testing
 

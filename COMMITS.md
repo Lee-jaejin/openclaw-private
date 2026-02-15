@@ -28,6 +28,7 @@
 | `scripts` | 운영 스크립트 |
 | `website` | 문서 사이트 |
 | `config` | 설정 파일 |
+| `network` | 네트워크/VPN 설정 |
 
 예시:
 ```
