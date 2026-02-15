@@ -6,6 +6,10 @@ set -uo pipefail
 
 ISSUES=0
 OLLAMA_HOST="${OLLAMA_HOST:-http://localhost:11434}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+AUDIT_LATEST_REPORT="${AUDIT_LATEST_REPORT:-$PROJECT_DIR/logs/audit/latest.md}"
+AUDIT_MAX_AGE_MIN="${AUDIT_MAX_AGE_MIN:-90}"
 
 check() {
     local name="$1"
@@ -83,7 +87,37 @@ else
     check "OpenClaw" "container not found"
 fi
 
-# 6. Disk space (warn if <10GB free)
+# 6. Egress proxy container
+if podman ps --format '{{.Names}}' | grep -q "^egress-proxy$"; then
+    check "Egress Proxy" "ok"
+else
+    check "Egress Proxy" "container not running"
+fi
+
+# 7. Egress audit freshness
+if [[ -f "$AUDIT_LATEST_REPORT" ]]; then
+    NOW_EPOCH=$(date +%s)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        FILE_EPOCH=$(stat -f %m "$AUDIT_LATEST_REPORT" 2>/dev/null || echo 0)
+    else
+        FILE_EPOCH=$(stat -c %Y "$AUDIT_LATEST_REPORT" 2>/dev/null || echo 0)
+    fi
+
+    if [[ "$FILE_EPOCH" -gt 0 ]]; then
+        AGE_MIN=$(( (NOW_EPOCH - FILE_EPOCH) / 60 ))
+        if [[ "$AGE_MIN" -le "$AUDIT_MAX_AGE_MIN" ]]; then
+            check "Egress Audit" "ok (latest report ${AGE_MIN}m ago)"
+        else
+            check "Egress Audit" "latest report too old (${AGE_MIN}m ago)"
+        fi
+    else
+        check "Egress Audit" "unable to read report timestamp"
+    fi
+else
+    check "Egress Audit" "report not found at $AUDIT_LATEST_REPORT"
+fi
+
+# 8. Disk space (warn if <10GB free)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     FREE_GB=$(df -g / | awk 'NR==2 {print $4}')
 else

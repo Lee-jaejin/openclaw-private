@@ -86,7 +86,30 @@ else
 fi
 echo ""
 
-# 5. System resources
+# 5. Egress proxy + audit status
+echo ">>> Egress Audit"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+AUDIT_LATEST_REPORT="${AUDIT_LATEST_REPORT:-$PROJECT_DIR/logs/audit/latest.md}"
+if podman ps --format '{{.Names}}' | grep -q "^egress-proxy$"; then
+    echo -e "    Proxy: ${GREEN}Running${NC}"
+else
+    echo -e "    Proxy: ${RED}Not running${NC}"
+fi
+
+if [[ -f "$AUDIT_LATEST_REPORT" ]]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        LAST_AUDIT="$(date -r "$(stat -f %m "$AUDIT_LATEST_REPORT")" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || echo "unknown")"
+    else
+        LAST_AUDIT="$(date -d "@$(stat -c %Y "$AUDIT_LATEST_REPORT")" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || echo "unknown")"
+    fi
+    echo "    Latest report: $LAST_AUDIT"
+else
+    echo -e "    Latest report: ${YELLOW}not found${NC}"
+fi
+echo ""
+
+# 6. System resources
 echo ">>> System Resources"
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS

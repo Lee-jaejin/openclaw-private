@@ -86,9 +86,9 @@ else
     echo "Building OpenClaw container (v${OPENCLAW_VERSION})..."
     cd "$PROJECT_DIR"
     if podman compose build --build-arg "OPENCLAW_VERSION=${OPENCLAW_VERSION}"; then
-        echo "Starting OpenClaw container..."
-        podman compose up -d openclaw
-        echo "OpenClaw started on port 18789"
+        echo "Starting egress proxy + OpenClaw containers..."
+        podman compose up -d egress-proxy openclaw
+        echo "OpenClaw started on ws://localhost:18789"
     else
         echo ""
         echo "  [WARN] OpenClaw container build failed."
@@ -113,4 +113,10 @@ echo "     podman exec headscale headscale nodes register --user <username> --ke
 echo ""
 echo "  3. Run health check:"
 echo "     bash $SCRIPT_DIR/health-check.sh"
+echo ""
+echo "  4. Route traffic via Tailscale exit node (recommended):"
+echo "     bash $SCRIPT_DIR/route-via-exit-node.sh <exit-node-ip-or-hostname>"
+echo ""
+echo "  5. Enable periodic egress audit:"
+echo "     bash $SCRIPT_DIR/setup-audit-cron.sh"
 echo ""
