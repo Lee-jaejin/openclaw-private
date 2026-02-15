@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
         'headscale-setup',
         'ollama-setup',
         'container-setup',
+        'openclaw-onboard',
       ],
     },
     {
