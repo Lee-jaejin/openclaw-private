@@ -19,6 +19,9 @@ services:
     volumes:
       - ../../config/openclaw.json:/home/node/.openclaw/openclaw.json:ro
       - openclaw-sessions:/home/node/.openclaw/sessions
+      # Optional: iMessage channel (see docs/setup-guide.md)
+      # - ~/.openclaw/keys/openclaw_imsg:/home/node/.ssh/openclaw_imsg:ro
+      # - ../../scripts/imsg-host:/usr/local/bin/imsg-host:ro
     security_opt:
       - no-new-privileges:true
     cap_drop:
