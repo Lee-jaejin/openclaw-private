@@ -33,6 +33,14 @@ docs/CLAUDE_MD_GUIDE.md
 # Claude Code
 CLAUDE.local.md
 .claude/agent-memory-local/
+.claude/settings.local.json
+
+# Editor / tools
+.cursorindexingignore
+.specstory/
+
+# TLS — entire certs directory (each user generates their own)
+infra/headscale/certs/
 
 # Cache
 .cache/
