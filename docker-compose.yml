@@ -3,34 +3,79 @@ version: "3.9"
 services:
   # === VPN 코디네이터 ===
   headscale:
-    image: headscale/headscale:latest
+    image: docker.io/headscale/headscale@sha256:51b1b9182bb6219e97374fa89af6b9320d6f87ecc739e328d5357ea4fa7a5ce3
     container_name: headscale
     restart: unless-stopped
     ports:
-      - "8080:8080"
-      - "9090:9090"
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:9090:9090"
+      - "127.0.0.1:3478:3478/udp"   # STUN (DERP NAT traversal)
     volumes:
-      - ./infra/headscale/config:/etc/headscale
+      - ./infra/headscale/config/config.yaml:/etc/headscale/config.yaml:ro
+      - ./infra/headscale/acl.json:/etc/headscale/acl.json:ro
+      - ./infra/headscale/certs:/etc/headscale/certs:ro
       - headscale-data:/var/lib/headscale
     command: serve
     environment:
       - TZ=Asia/Seoul
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/headscale
 
   # === 로컬 LLM 서버 (--profile with-ollama 로 활성화) ===
   ollama:
-    image: ollama/ollama:latest
+    image: docker.io/ollama/ollama@sha256:5f7a20da9b4d42d1909b4693f90942135bcabc335ee42d529c0d143c44a92311
     container_name: ollama
     restart: unless-stopped
     profiles:
       - with-ollama
     ports:
-      - "11434:11434"
+      - "127.0.0.1:11434:11434"
     volumes:
       - ollama-models:/root/.ollama
     environment:
       - OLLAMA_KEEP_ALIVE=5m
       - OLLAMA_NUM_PARALLEL=1
       - OLLAMA_MAX_LOADED_MODELS=1
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # === 아웃바운드 감사 프록시 ===
+  egress-proxy:
+    build:
+      context: ./infra/egress-proxy
+    image: openclaw-egress-proxy:local
+    container_name: egress-proxy
+    restart: unless-stopped
+    networks:
+      - default
+      - openclaw-internal
+    expose:
+      - "3128"
+    volumes:
+      - ./logs/egress-proxy:/var/log/squid
+      - egress-proxy-cache:/var/cache/squid
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 3128"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   # === AI 어시스턴트 ===
   openclaw:
@@ -41,11 +86,20 @@ services:
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped
+    depends_on:
+      egress-proxy:
+        condition: service_healthy
+    networks:
+      - openclaw-internal
     ports:
-      - "18789:18789"
+      - "127.0.0.1:18789:18789"
     environment:
       - OLLAMA_HOST=${OLLAMA_HOST}
       - NODE_ENV=production
+      - HTTP_PROXY=${OPENCLAW_EGRESS_PROXY:-http://egress-proxy:3128}
+      - HTTPS_PROXY=${OPENCLAW_EGRESS_PROXY:-http://egress-proxy:3128}
+      - ALL_PROXY=${OPENCLAW_EGRESS_PROXY:-http://egress-proxy:3128}
+      - NO_PROXY=${OPENCLAW_NO_PROXY:-localhost,127.0.0.1,host.containers.internal,ollama,headscale,egress-proxy}
     env_file:
       - ./.env
     volumes:
@@ -55,10 +109,19 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    pids_limit: 256
+    tmpfs:
+      - /tmp
     extra_hosts:
       - "host.containers.internal:host-gateway"
+
+networks:
+  openclaw-internal:
+    driver: bridge
+    internal: true
 
 volumes:
   headscale-data:
   ollama-models:
+  egress-proxy-cache:
   openclaw-sessions:
