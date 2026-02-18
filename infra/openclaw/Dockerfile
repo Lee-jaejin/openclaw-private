@@ -1,8 +1,10 @@
 FROM node:22-bookworm-slim
 
-ARG OPENCLAW_VERSION=2026.1.29
+ARG OPENCLAW_VERSION=2026.2.15
 
 ENV NODE_ENV=production
+ENV PNPM_HOME=/usr/local/share/pnpm
+ENV PATH="${PNPM_HOME}:${PATH}"
 
 WORKDIR /app
 
@@ -11,6 +13,7 @@ RUN apt-get update \
         git \
         ca-certificates \
         openssh-client \
+        systemd \
     && rm -rf /var/lib/apt/lists/*
 
 RUN corepack enable pnpm && pnpm add -g "openclaw@${OPENCLAW_VERSION}"

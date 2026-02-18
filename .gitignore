@@ -46,3 +46,7 @@ infra/headscale/certs/
 .cache/
 .npm/
 .pnpm-store/
+
+# OpenClaw agent workspace (SOUL.md, AGENTS.md, memory — private)
+workspace/
+workspace-templates/

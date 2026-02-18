@@ -82,7 +82,7 @@ services:
     build:
       context: ./infra/openclaw
       args:
-        OPENCLAW_VERSION: ${OPENCLAW_VERSION:-2026.1.29}
+        OPENCLAW_VERSION: ${OPENCLAW_VERSION:-2026.2.15}
     image: openclaw:local
     container_name: openclaw
     restart: unless-stopped
@@ -105,8 +105,10 @@ services:
     env_file:
       - ./.env
     volumes:
+      - openclaw-data:/home/node/.openclaw
       - ./config/openclaw.json:/home/node/.openclaw/openclaw.json:ro
-      - openclaw-sessions:/home/node/.openclaw/sessions
+      # Workspace for SOUL.md, AGENTS.md, USER.md (see docs/openclaw-workspace-setup.md)
+      - ./workspace:/home/node/.openclaw/workspace
       - ~/.openclaw/keys/openclaw_imsg:/home/node/.ssh/openclaw_imsg:ro
       - ./scripts/imsg-host:/usr/local/bin/imsg:ro
     security_opt:
@@ -130,4 +132,4 @@ volumes:
   headscale-data:
   ollama-models:
   egress-proxy-cache:
-  openclaw-sessions:
+  openclaw-data:

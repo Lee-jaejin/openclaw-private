@@ -4,6 +4,7 @@
   },
   "agents": {
     "defaults": {
+      "skipBootstrap": true,
       "model": {
         "primary": "ollama/gpt-oss:20b",
         "fallbacks": [
@@ -69,7 +70,13 @@
     "mode": "local",
     "auth": {
       "mode": "token",
-      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+      "token": "${OPENCLAW_GATEWAY_TOKEN}",
+      "rateLimit": {
+        "maxAttempts": 10,
+        "windowMs": 60000,
+        "lockoutMs": 300000,
+        "exemptLoopback": true
+      }
     },
     "port": 18789,
     "bind": "tailnet",
