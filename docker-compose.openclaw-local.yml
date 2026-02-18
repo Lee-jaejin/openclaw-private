@@ -1,0 +1,18 @@
+# Override: build OpenClaw from a local tarball (e.g. openclaw repo branch).
+# Requires infra/openclaw/openclaw-*.tgz to exist (see docs/openclaw-local-build.md).
+#
+# Usage:
+#   cp /path/to/openclaw/openclaw-*.tgz infra/openclaw/
+#   podman compose -f docker-compose.yml -f docker-compose.openclaw-local.yml up -d --build openclaw
+#
+# Without this override, `compose up --build` uses the default Dockerfile and
+# installs openclaw from npm (no local branch fixes).
+
+version: "3.9"
+
+services:
+  openclaw:
+    build:
+      context: ./infra/openclaw
+      dockerfile: Dockerfile.local
+    image: openclaw:local

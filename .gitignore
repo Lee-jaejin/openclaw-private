@@ -50,3 +50,6 @@ infra/headscale/certs/
 # OpenClaw agent workspace (SOUL.md, AGENTS.md, memory — private)
 workspace/
 workspace-templates/
+
+# Local OpenClaw tarball for testing a branch (see docs/openclaw-local-build.md)
+infra/openclaw/openclaw-*.tgz

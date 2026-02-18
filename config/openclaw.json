@@ -1,12 +1,17 @@
 {
   "messages": {
-    "ackReactionScope": "group-mentions"
+    "ackReactionScope": "group-mentions",
+    "inbound": {
+      "byChannel": {
+        "imessage": 2500
+      }
+    }
   },
   "agents": {
     "defaults": {
       "skipBootstrap": true,
       "model": {
-        "primary": "ollama/gpt-oss:20b",
+        "primary": "ollama/llama3.1:8b",
         "fallbacks": [
           "ollama/llama3.2:latest"
         ]
@@ -29,8 +34,8 @@
         "api": "openai-completions",
         "models": [
           {
-            "id": "gpt-oss:20b",
-            "name": "gpt-oss:20b"
+            "id": "llama3.1:8b",
+            "name": "llama3.1:8b"
           },
           {
             "id": "starcoder2:15b",
