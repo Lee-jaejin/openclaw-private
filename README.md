@@ -161,6 +161,7 @@ pnpm audit:cron
 - [Monitoring](docs/monitoring.md)
 - [Offline Mode](docs/offline-mode.md)
 - [Mobile Support](docs/mobile-support.md)
+- [Update Policy](docs/update-policy.md)
 - [TODO](docs/TODO.md)
 
 ## Requirements
