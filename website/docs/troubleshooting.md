@@ -115,6 +115,28 @@ podman exec -u root openclaw chown -R node:node /home/node/.openclaw
 podman compose restart openclaw
 ```
 
+### Assistant repeats "read SOUL.md / AGENTS.md" instead of answering
+
+**Symptom:** You ask a question via iMessage; the model spends a long time "thinking" and then keeps saying it should read SOUL.md, AGENTS.md, USER.md, or MEMORY.md, instead of giving a direct answer.
+
+**Cause:** The request sent to the LLM includes project-context instructions meant for an **agent with tools** (e.g. "read SOUL.md every session"). The local Ollama model has **no file-reading tools**, so it cannot act on those instructions and instead **verbalizes** them in a loop. If the entries plugin attaches only a **list of files** (AGENTS.md, SOUL.md) without their contents, the model may fixate on "I need to read these" without ever answering the user.
+
+**What you can do:**
+
+1. **Try disabling the entries plugin** for iMessage so that file lists are not attached to messages. In `config/openclaw.json` set:
+   ```json
+   "plugins": {
+     "entries": {
+       "imessage": { "enabled": false }
+     }
+   }
+   ```
+   Then restart: `podman restart openclaw`.
+
+2. **Adjust project context / system prompt in OpenClaw.** If you build OpenClaw from source (e.g. the `openclaw` repo), check how system prompts or project guidelines are built for chat sessions. Instructions like "always read SOUL.md, AGENTS.md first" are meant for IDE agents with file access; for iMessage chat, use a simpler instruction such as "answer the user's question directly" and avoid injecting file-reading steps when the model has no tools to read files.
+
+3. **Use a smaller or different model** if the current one tends to over-reason; sometimes a different Ollama model gives more direct answers with the same config.
+
 ## Mobile Issues
 
 ### VPN Slow on Mobile

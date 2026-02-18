@@ -115,6 +115,28 @@ podman exec -u root openclaw chown -R node:node /home/node/.openclaw
 podman compose restart openclaw
 ```
 
+### "SOUL.md/AGENTS.md 읽어야 한다"만 반복하고 질문에 답 안 함
+
+**증상:** iMessage로 질문을 보내면, 한참 메모리만 쓰다가 질문에는 제대로 답하지 않고 "SOUL.md, AGENTS.md, USER.md, MEMORY.md를 읽어야 한다"는 말만 반복한다.
+
+**원인:** LLM에 넘어가는 요청에 **도구를 쓰는 에이전트**용 지침(예: "매 세션 SOUL.md를 읽어라")이 들어 있는데, 로컬 Ollama 모델에는 **파일을 읽는 도구가 없다**. 그래서 그 지침을 실행하지 못하고 **말로만** 따라 하며 "읽겠다"만 반복한다. entries 플러그인이 **파일 목록**(AGENTS.md, SOUL.md)만 붙이고 내용은 안 넣어 주면, 모델이 "이 파일들을 읽어야 해"에만 고정되어 사용자 질문에 답하지 못할 수 있다.
+
+**대응 방법:**
+
+1. **entries 플러그인 끄기** — iMessage로 파일 목록이 안 붙도록 `config/openclaw.json`에서 다음처럼 설정한 뒤 재시작한다.
+   ```json
+   "plugins": {
+     "entries": {
+       "imessage": { "enabled": false }
+     }
+   }
+   ```
+   재시작: `podman restart openclaw`
+
+2. **OpenClaw 쪽 프로젝트 컨텍스트/시스템 프롬프트 조정** — OpenClaw 소스(예: `openclaw` 레포)에서 채팅 세션에 넣는 시스템 프롬프트나 프로젝트 가이드를 확인한다. "항상 SOUL.md, AGENTS.md를 먼저 읽어라" 같은 지시는 **파일 접근이 있는 IDE 에이전트**용이다. iMessage 채팅처럼 **파일 읽기 도구가 없는** 환경에서는 "사용자 질문에 바로 답하라"처럼 단순한 지시만 넣고, 파일 읽기 단계는 넣지 않는 것이 좋다.
+
+3. **모델 변경** — 현재 모델이 추론만 길게 하고 답을 잘 안 하면, 다른 Ollama 모델로 바꿔 보면 도움이 될 수 있다.
+
 ## 모바일 문제
 
 ### 모바일에서 VPN 느림
