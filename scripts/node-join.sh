@@ -1,0 +1,70 @@
+#!/bin/bash
+# Join this Linux node to the OpenClaw VPN network.
+#
+# Prerequisites (control tower):
+#   1. yarn start
+#   2. ./scripts/serve-ca.sh  (in a separate terminal, to serve CA cert)
+#
+# Usage:
+#   ./scripts/node-join.sh <control-tower-ip> <api-key>
+#
+# Example:
+#   ./scripts/node-join.sh 192.168.1.10 hskey-api-xxxx
+
+set -euo pipefail
+
+CONTROL_IP="${1:?Usage: node-join.sh <control-tower-ip> <api-key>}"
+API_KEY="${2:?Usage: node-join.sh <control-tower-ip> <api-key>}"
+HEADSCALE_URL="https://${CONTROL_IP}:8080"
+CA_URL="http://${CONTROL_IP}:8880/ca.crt"
+HEADSCALE_USER="${HEADSCALE_USER:-kosmos}"
+
+echo "=== Joining OpenClaw network ==="
+echo "Control tower: ${HEADSCALE_URL}"
+
+# 1. Install CA certificate
+echo "[1/3] Installing CA certificate..."
+if curl -sf --max-time 5 "${CA_URL}" -o /tmp/headscale-ca.crt; then
+    sudo cp /tmp/headscale-ca.crt /usr/local/share/ca-certificates/headscale-ca.crt
+    sudo update-ca-certificates --fresh > /dev/null 2>&1
+    echo "  CA certificate installed."
+else
+    echo "  Warning: could not download CA cert from ${CA_URL}"
+    echo "  Run './scripts/serve-ca.sh' on the control tower first, or install manually."
+    echo "  Continuing — if already installed this is fine."
+fi
+
+# 2. Create preauthkey via headscale API
+echo "[2/3] Generating auth key..."
+AUTHKEY=$(curl -sf \
+    --cacert /usr/local/share/ca-certificates/headscale-ca.crt \
+    -X POST "${HEADSCALE_URL}/api/v1/preauthkey" \
+    -H "Authorization: Bearer ${API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "{\"user\":\"${HEADSCALE_USER}\",\"reusable\":false,\"ephemeral\":false,\"expiration\":\"1h\"}" \
+    | jq -r '.preAuthKey.key' 2>/dev/null || true)
+
+# Fallback to -k if CA cert not yet trusted by curl
+if [[ -z "${AUTHKEY}" || "${AUTHKEY}" == "null" ]]; then
+    AUTHKEY=$(curl -sf -k \
+        -X POST "${HEADSCALE_URL}/api/v1/preauthkey" \
+        -H "Authorization: Bearer ${API_KEY}" \
+        -H "Content-Type: application/json" \
+        -d "{\"user\":\"${HEADSCALE_USER}\",\"reusable\":false,\"ephemeral\":false,\"expiration\":\"1h\"}" \
+        | jq -r '.preAuthKey.key')
+fi
+
+if [[ -z "${AUTHKEY}" || "${AUTHKEY}" == "null" ]]; then
+    echo "Error: failed to generate auth key. Check IP and API key." >&2
+    exit 1
+fi
+
+# 3. Connect to VPN
+echo "[3/3] Connecting to VPN..."
+sudo tailscale up \
+    --login-server="${HEADSCALE_URL}" \
+    --authkey="${AUTHKEY}" \
+    --accept-routes
+
+echo ""
+echo "Done. Run 'tailscale status' to verify."

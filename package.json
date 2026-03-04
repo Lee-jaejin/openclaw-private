@@ -15,6 +15,9 @@
     "route:exit-node": "bash scripts/route-via-exit-node.sh",
     "audit:egress": "bash scripts/audit-egress.sh",
     "audit:cron": "bash scripts/setup-audit-cron.sh",
+    "ca:gen": "bash scripts/setup-certs.sh",
+    "ca:setup": "sudo bash scripts/setup-macos-ca.sh",
+    "ca:serve": "bash scripts/serve-ca.sh",
     "docs:dev": "pnpm --filter website start",
     "docs:build": "pnpm --filter website build",
     "docs:serve": "pnpm --filter website serve"

@@ -11,9 +11,9 @@
     "defaults": {
       "skipBootstrap": true,
       "model": {
-        "primary": "ollama/llama3.1:8b",
+        "primary": "ollama/gpt-oss:20b",
         "fallbacks": [
-          "ollama/llama3.2:latest"
+          "ollama/llama3.1:8b"
         ]
       },
       "maxConcurrent": 4,
@@ -34,20 +34,12 @@
         "api": "openai-completions",
         "models": [
           {
+            "id": "gpt-oss:20b",
+            "name": "gpt-oss:20b"
+          },
+          {
             "id": "llama3.1:8b",
             "name": "llama3.1:8b"
-          },
-          {
-            "id": "starcoder2:15b",
-            "name": "starcoder2:15b"
-          },
-          {
-            "id": "phi4:14b",
-            "name": "phi4:14b"
-          },
-          {
-            "id": "llama3.2:latest",
-            "name": "llama3.2:latest"
           }
         ]
       }
