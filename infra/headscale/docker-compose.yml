@@ -6,9 +6,9 @@ services:
     container_name: headscale
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8080:8080"      # Web UI / API
+      - "0.0.0.0:8080:8080"         # Web UI / API
       - "127.0.0.1:9090:9090"      # Metrics
-      - "127.0.0.1:3478:3478/udp"  # STUN (DERP NAT traversal)
+      - "0.0.0.0:3478:3478/udp"    # STUN (DERP NAT traversal)
     volumes:
       - ./config/config.yaml:/etc/headscale/config.yaml:ro
       - ./acl.json:/etc/headscale/acl.json:ro

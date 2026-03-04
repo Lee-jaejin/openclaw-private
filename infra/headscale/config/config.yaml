@@ -1,7 +1,7 @@
 # Headscale configuration for OpenClaw Private
 # https://github.com/juanfont/headscale
 
-server_url: https://192.168.64.1:8080
+server_url: https://192.168.45.20:8080
 listen_addr: 0.0.0.0:8080
 metrics_listen_addr: 0.0.0.0:9090
 grpc_listen_addr: 0.0.0.0:50443
@@ -60,4 +60,4 @@ derp:
     stun_listen_addr: 0.0.0.0:3478
     private_key_path: /var/lib/headscale/derp_server_private.key
     automatically_add_embedded_derp_region: true
-    ipv4: 192.168.64.1
+    ipv4: 192.168.45.20
