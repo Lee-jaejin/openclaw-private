@@ -110,6 +110,8 @@ services:
       - ./config/openclaw.json:/home/node/.openclaw/openclaw.json:ro
       # Workspace for SOUL.md, AGENTS.md, USER.md (see docs/openclaw-workspace-setup.md)
       - ./workspace:/home/node/.openclaw/workspace
+      # Agent guide for CLAUDE.md creation/editing (set AGENT_GUIDE_PATH in .env)
+      - ${AGENT_GUIDE_PATH}:/home/node/agent-guide
       - ~/.openclaw/keys/openclaw_imsg:/home/node/.ssh/openclaw_imsg:ro
       - ./scripts/imsg-host:/usr/local/bin/imsg:ro
     security_opt:
