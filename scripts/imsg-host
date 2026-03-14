@@ -8,6 +8,7 @@ IMSG_SSH_USER="${IMSG_SSH_USER:-$(whoami)}"
 IMSG_BIN="${IMSG_BIN:-/opt/homebrew/bin/imsg}"
 
 exec /usr/bin/ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new \
+  -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
   -i /home/node/.ssh/openclaw_imsg -T \
   "${IMSG_SSH_USER}@host.containers.internal" \
   "${IMSG_BIN}" "$@"

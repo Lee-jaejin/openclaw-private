@@ -11,9 +11,9 @@
     "defaults": {
       "skipBootstrap": true,
       "model": {
-        "primary": "ollama/gpt-oss:20b",
+        "primary": "ollama/llama3.1:8b",
         "fallbacks": [
-          "ollama/llama3.1:8b"
+          "ollama/llama3.2:3b"
         ]
       },
       "maxConcurrent": 4,
@@ -34,12 +34,28 @@
         "api": "openai-completions",
         "models": [
           {
-            "id": "gpt-oss:20b",
-            "name": "gpt-oss:20b"
-          },
-          {
             "id": "llama3.1:8b",
             "name": "llama3.1:8b"
+          },
+          {
+            "id": "llama3.2:3b",
+            "name": "llama3.2:3b"
+          },
+          {
+            "id": "qwen2.5:7b",
+            "name": "qwen2.5:7b"
+          },
+          {
+            "id": "qwen2.5-coder:7b",
+            "name": "qwen2.5-coder:7b"
+          },
+          {
+            "id": "phi3:medium",
+            "name": "phi3:medium"
+          },
+          {
+            "id": "phi4:14b",
+            "name": "phi4:14b"
           }
         ]
       }
