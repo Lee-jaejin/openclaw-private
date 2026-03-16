@@ -15,5 +15,27 @@ PORT="${1:-8880}"
 LAN_IP=$(ipconfig getifaddr en0 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
 
 echo "Serving CA cert at http://${LAN_IP}:${PORT}/ca.crt"
+echo "iOS profile:       http://${LAN_IP}:${PORT}/headscale-ca.mobileconfig"
 echo "Press Ctrl+C to stop."
-python3 -m http.server "${PORT}" --directory "${CA_DIR}"
+
+# Custom server: .mobileconfig must be served as application/x-apple-aspen-config
+# otherwise iOS treats it as a file download instead of a configuration profile
+python3 - "${PORT}" "${CA_DIR}" << 'PYEOF'
+import sys, os
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+
+port = int(sys.argv[1])
+directory = sys.argv[2]
+
+class Handler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=directory, **kwargs)
+    def guess_type(self, path):
+        if str(path).endswith('.mobileconfig'):
+            return 'application/x-apple-aspen-config'
+        return super().guess_type(path)
+    def log_message(self, fmt, *args):
+        print(fmt % args)
+
+HTTPServer(('', port), Handler).serve_forever()
+PYEOF

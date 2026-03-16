@@ -26,6 +26,12 @@ else
     echo "    Headscale container not running, skipping..."
 fi
 
+if podman volume ls --format '{{.Name}}' | grep -q '^headscale-data$'; then
+    podman volume export headscale-data > "$BACKUP_PATH/headscale-data.tar"
+    echo "    Headscale volume backup: OK"
+    echo "    Restore: podman volume import headscale-data < $BACKUP_PATH/headscale-data.tar"
+fi
+
 # 2. Configuration backup
 echo ">>> Backing up configurations..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
