@@ -33,6 +33,7 @@ docs/CLAUDE_MD_GUIDE.md
 # Claude Code
 CLAUDE.local.md
 .claude/agent-memory-local/
+.claude/agent-memory/
 .claude/settings.local.json
 
 # Editor / tools
