@@ -1,6 +1,10 @@
 #!/bin/bash
 # Check the latest openclaw version on npm and rebuild the container if a newer version is available.
 # Usage: bash scripts/update-openclaw.sh
+#
+# NOTE: Requires internet access (calls registry.npmjs.org via `npm view`).
+# Not suitable for fully air-gapped environments.
+# For internal registries, set NPM_REGISTRY in .env and update the npm view call below.
 
 set -euo pipefail
 
