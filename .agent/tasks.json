@@ -1,0 +1,23 @@
+[
+  {
+    "id": "TASK-001",
+    "title": "Implement auto-update mechanism",
+    "description": "Implement an automatic update mechanism for the openclaw npm package. Check the latest version on npm, compare with the currently installed version in the container, and if a newer version exists, pull the new image or update in place. Add a pnpm update:openclaw script.",
+    "priority": 1,
+    "status": "completed"
+  },
+  {
+    "id": "TASK-002",
+    "title": "Add local backup script for Headscale SQLite database",
+    "description": "Implement a local backup strategy for the Headscale SQLite database used by the VPN coordinator. The backup.sh script already handles general backups; extend it to explicitly include the headscale-data volume. Verify restore procedure works.",
+    "priority": 2,
+    "status": "completed"
+  },
+  {
+    "id": "TASK-003",
+    "title": "Verify and document 70B model support",
+    "description": "Analyze the current RAM usage when running the largest available model (34B). Document the memory headroom. If >= 40GB is available, uncomment the 70B model entries in infra/ollama/models.sh and update STATUS.md with the verification result.",
+    "priority": 3,
+    "status": "completed"
+  }
+]

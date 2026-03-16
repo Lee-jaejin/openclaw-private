@@ -1,0 +1,9 @@
+[
+  {
+    "id": "TASK-001",
+    "title": "Create a new project with agent-guide",
+    "description": "proejct setup template ",
+    "priority": 1,
+    "status": "pending"
+  }
+]
