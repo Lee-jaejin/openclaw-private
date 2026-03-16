@@ -46,6 +46,32 @@ selectModel("왜 이렇게 동작하는지 분석해줘");
 // => reasoning 모델
 ```
 
+## Claude 프로바이더
+
+`provider: "claude"` 옵션으로 Ollama 대신 Claude 모델로 라우팅:
+
+```typescript
+import { createModelRouter } from "@openclaw-private/model-router";
+
+const router = createModelRouter({ provider: "claude" });
+
+router.selectModel("이 버그를 수정해줘");
+// => "claude-sonnet-4-6"
+
+router.selectModel("아키텍처 트레이드오프를 분석해줘");
+// => "claude-opus-4-6"
+```
+
+기본 Claude 모델 매핑:
+
+| 태스크 유형 | 모델 |
+|------------|------|
+| `coding` | `claude-sonnet-4-6` |
+| `reasoning` | `claude-opus-4-6` |
+| `general` | `claude-sonnet-4-6` |
+
+[Ralph Loop](./ralph-loop.md)에서 이터레이션마다 모델을 자동 선택할 때 사용합니다.
+
 ## 커스텀 설정
 
 ```typescript

@@ -11,8 +11,11 @@ export interface ModelConfig {
   general: string;
 }
 
+export type Provider = "ollama" | "claude";
+
 export interface RouterOptions {
   models?: Partial<ModelConfig>;
+  provider?: Provider;
   debug?: boolean;
 }
 
@@ -20,6 +23,12 @@ const DEFAULT_MODELS: ModelConfig = {
   coding: "ollama/starcoder2:15b",
   reasoning: "ollama/phi4:14b",
   general: "ollama/gpt-oss:20b",
+};
+
+const CLAUDE_MODELS: ModelConfig = {
+  coding: "claude-sonnet-4-6",
+  reasoning: "claude-opus-4-6",
+  general: "claude-sonnet-4-6",
 };
 
 // Keywords for task classification
@@ -115,10 +124,12 @@ export function selectModel(
   message: string,
   options: RouterOptions = {}
 ): string {
-  const models = { ...DEFAULT_MODELS, ...options.models };
+  const baseModels = options.provider === "claude" ? CLAUDE_MODELS : DEFAULT_MODELS;
+  const models = { ...baseModels, ...options.models };
   const taskType = classifyTask(message);
 
   if (options.debug) {
+    console.log(`[model-router] Provider: ${options.provider ?? "ollama"}`);
     console.log(`[model-router] Task type: ${taskType}`);
     console.log(`[model-router] Selected model: ${models[taskType]}`);
   }
@@ -130,7 +141,8 @@ export function selectModel(
  * Create a model router with custom configuration
  */
 export function createModelRouter(options: RouterOptions = {}) {
-  const models = { ...DEFAULT_MODELS, ...options.models };
+  const baseModels = options.provider === "claude" ? CLAUDE_MODELS : DEFAULT_MODELS;
+  const models = { ...baseModels, ...options.models };
 
   return {
     selectModel: (message: string) => selectModel(message, options),
