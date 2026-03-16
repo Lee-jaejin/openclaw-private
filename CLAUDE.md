@@ -29,6 +29,8 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 
 **Rule 4: 데이터 로컬 유지** — LLM 추론 데이터, 사용자 데이터 모두 로컬에서만 처리하고 외부로 전송하지 않는다.
 
+**Rule 5: 선택적 구성요소 옵션화** — 핵심 기능에 필수적이지 않은 컴포넌트는 환경변수가 설정된 경우에만 활성화한다. 미설정 시 에러 없이 건너뛴다. `.env.example`에 선택성과 교체 방법을 명시한다.
+
 ## Behavior
 
 - 모호한 요청 시 가정을 명시하고, 구현 전 확인
@@ -43,6 +45,18 @@ website/                  → Docusaurus 문서 사이트 (한/영 i18n)
 - **Ollama 직접 운영**: 외부 API 의존 제거, 추론 데이터 로컬 유지
 - **Headscale**: Tailscale 컨트롤 서버의 셀프호스팅 대안, 외부 SaaS 불필요
 - **호스트 Ollama 전환**: 컨테이너 대비 GPU 직접 접근, 메모리 효율 우위
+
+## Optional Components (Rule 5 적용)
+
+핵심 기능에 필수적이지 않은 구성요소. 환경변수 설정 여부로 활성화.
+
+| 구성요소 | 활성화 환경변수 | 기본 동작 |
+|---------|---------------|---------|
+| Ralph 알림 (ntfy) | `NTFY_URL` | 미설정 시 알림 없이 정상 동작 |
+
+**교체 패턴**: 새 알림 백엔드를 추가하려면 `infra/ralph/scripts/lib/notify.sh`에 `send_ralph_<channel>()` 구현. 기존 채널과 공존 가능.
+
+**구현 규칙**: 선택적 구성요소는 반드시 `[ -z "${VAR:-}" ] && return 0` 패턴으로 graceful skip.
 
 ## Commands
 
@@ -90,6 +104,20 @@ git diff --cached | grep -iE '(jaejin|MacBook|192\.168|100\.64)'
 - 코드 변경 후: `node --test` (해당 모듈)
 - 인프라 변경 후: `pnpm health`
 - 타입 체크: `pnpm exec tsc --noEmit`
+
+## User-Facing Guides
+
+사용자가 직접 수행해야 하는 작업(설치, 설정, 연결 등)을 구현하면 반드시 가이드 문서를 함께 작성한다.
+
+**작성 기준**: 사용자가 터미널이나 UI에서 직접 명령을 입력하거나 단계를 따라야 하는 경우.
+
+**위치**:
+- 영문: `website/docs/<guide-name>.md`
+- 한국어: `website/i18n/ko/docusaurus-plugin-content-docs/current/<guide-name>.md`
+
+**포함 항목**: 사전 조건, 단계별 명령어, 확인 방법, 트러블슈팅.
+
+**예시**: `infra/dex/` 추가 → `website/docs/iphone-vpn-setup.md` 동시 작성.
 
 ## Commits
 

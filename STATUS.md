@@ -1,6 +1,6 @@
 # OpenClaw Private - 프로젝트 진행 상황
 
-> 최종 업데이트: 2026-02-14
+> 최종 업데이트: 2026-03-14
 > 버전: 0.1.0 (초기 단계)
 
 ## 프로젝트 개요
@@ -38,7 +38,7 @@
 | OpenClaw 앱 본체 | 부분 구현 | 컨테이너 인프라 구축 완료 (`infra/openclaw/`), pnpm 패키지 의존성으로 전환 |
 | 테스트 코드 | 부분 구현 | Model Router 테스트 완료 (44건), 추가 컴포넌트 테스트 필요 |
 | GPU 가속 | 완료 | `docker-compose.gpu.yml` override 파일로 토글 가능 |
-| 70B 모델 지원 | 주석 처리 | RAM 40GB+ 필요, models.sh에서 주석 처리 |
+| 70B 모델 지원 | 미지원 확정 | 하드웨어 RAM 36GB < 최소 40GB 요구량, 지원 불가 |
 | 클라우드 백업 | 미구현 | 로컬 백업만 구현, S3 등 미연동 |
 | 자동 업데이트 | 미구현 | 수동 업데이트만 가능 |
 
@@ -102,6 +102,6 @@ openclaw-private/
 - [x] OpenClaw npm 패키지 의존성으로 전환
 - [x] Model Router 플러그인 테스트 코드 작성 (44건 pass)
 - [x] NVIDIA GPU 가속 override 파일 분리 (`docker-compose.gpu.yml`)
-- [ ] 70B 모델 지원 검증 (충분한 RAM 확보 시)
+- [x] 70B 모델 지원 검증 → 36GB RAM < 40GB 최소 요구량, 미지원 확정 (가용 헤드룸: ~24GB)
 - [ ] 클라우드 백업 연동 (S3 등)
 - [ ] 자동 업데이트 메커니즘 구현
