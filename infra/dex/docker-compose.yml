@@ -1,0 +1,19 @@
+services:
+  dex:
+    image: ghcr.io/dexidp/dex:v2.38.0
+    container_name: dex
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    ports:
+      - "0.0.0.0:5556:5556"
+    volumes:
+      - ./config.yaml:/etc/dex/config.yaml:ro
+      - ./certs:/etc/dex/certs:ro
+      - dex-data:/var/dex
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+volumes:
+  dex-data:

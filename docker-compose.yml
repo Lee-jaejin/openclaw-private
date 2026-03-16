@@ -18,6 +18,7 @@ services:
     command: serve
     environment:
       - TZ=Asia/Seoul
+      - SSL_CERT_FILE=/etc/headscale/certs/ca.crt  # Trust our CA for OIDC (Dex)
     security_opt:
       - no-new-privileges:true
     cap_drop:

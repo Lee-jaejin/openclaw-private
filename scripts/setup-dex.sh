@@ -1,0 +1,226 @@
+#!/bin/bash
+# Set up Dex OIDC server for headscale iPhone/iOS authentication (Option A).
+# Run once after setup-certs.sh, before dex:up.
+#
+# Usage: ./scripts/setup-dex.sh
+#
+# Required in .env:
+#   HEADSCALE_HOST_IP   — this machine's LAN IP (same as used for headscale)
+#   DEX_ADMIN_PASSWORD  — login password for admin@openclaw.private
+#   DEX_CLIENT_SECRET   — shared secret between Dex and headscale (random string)
+#
+# Option B (LAN only, no OIDC):
+#   Set DEX_ENABLED=false in .env → skips setup, iPhone uses ntfy on home WiFi only
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DEX_DIR="${PROJECT_DIR}/infra/dex"
+DEX_CERTS_DIR="${DEX_DIR}/certs"
+HS_CERTS_DIR="${PROJECT_DIR}/infra/headscale/certs"
+HS_CONFIG="${PROJECT_DIR}/infra/headscale/config/config.yaml"
+
+# Load .env
+if [[ -f "${PROJECT_DIR}/.env" ]]; then
+  set -a && . "${PROJECT_DIR}/.env" && set +a
+fi
+
+# Option B: skip if DEX_ENABLED=false
+if [[ "${DEX_ENABLED:-true}" != "true" ]]; then
+  echo "DEX_ENABLED=false — skipping Dex setup."
+  echo "Option B (LAN only): iPhone can access ntfy only on home WiFi."
+  HOST_IP="${HEADSCALE_HOST_IP:-<LAN_IP>}"
+  echo "  ntfy URL for iPhone: http://${HOST_IP}:8095"
+  exit 0
+fi
+
+# Validate required vars
+HOST_IP="${HEADSCALE_HOST_IP:-}"
+[[ -z "${HOST_IP}" ]] && { echo "Error: HEADSCALE_HOST_IP not set in .env" >&2; exit 1; }
+
+DEX_ADMIN_PASSWORD="${DEX_ADMIN_PASSWORD:-}"
+[[ -z "${DEX_ADMIN_PASSWORD}" ]] && {
+  echo "Error: DEX_ADMIN_PASSWORD not set in .env" >&2
+  echo "  Add: DEX_ADMIN_PASSWORD=<your-password>" >&2
+  exit 1
+}
+
+DEX_CLIENT_SECRET="${DEX_CLIENT_SECRET:-}"
+[[ -z "${DEX_CLIENT_SECRET}" ]] && {
+  echo "Error: DEX_CLIENT_SECRET not set in .env" >&2
+  echo "  Add: DEX_CLIENT_SECRET=$(openssl rand -hex 24)" >&2
+  exit 1
+}
+
+# Podman VM gateway (already in headscale cert SAN)
+PODMAN_GW=$(ipconfig getifaddr podman1 2>/dev/null || echo "192.168.64.1")
+
+echo "=== Setting up Dex OIDC ==="
+echo "  Host IP:   ${HOST_IP}"
+echo "  Podman GW: ${PODMAN_GW}"
+echo ""
+
+mkdir -p "${DEX_CERTS_DIR}"
+
+# ── Step 1: Dex TLS cert ──────────────────────────────────────────────────────
+if [[ -f "${DEX_CERTS_DIR}/dex.crt" ]]; then
+  echo "[1/4] Dex TLS cert already exists, skipping."
+else
+  echo "[1/4] Generating Dex TLS certificate..."
+
+  cat > "${DEX_CERTS_DIR}/dex-openssl.cnf" << EOF
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+distinguished_name = dn
+req_extensions = v3_req
+
+[dn]
+CN = dex.local
+
+[v3_req]
+basicConstraints = critical, CA:FALSE
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+DNS.2 = dex.local
+DNS.3 = dex
+IP.1 = 127.0.0.1
+IP.2 = ${HOST_IP}
+IP.3 = ${PODMAN_GW}
+EOF
+
+  openssl genrsa -out "${DEX_CERTS_DIR}/dex.key" 2048 2>/dev/null
+  openssl req -new \
+    -key "${DEX_CERTS_DIR}/dex.key" \
+    -out "${DEX_CERTS_DIR}/dex.csr" \
+    -config "${DEX_CERTS_DIR}/dex-openssl.cnf"
+  openssl x509 -req -days 825 \
+    -in "${DEX_CERTS_DIR}/dex.csr" \
+    -CA "${HS_CERTS_DIR}/ca.crt" \
+    -CAkey "${HS_CERTS_DIR}/ca.key" \
+    -CAcreateserial \
+    -out "${DEX_CERTS_DIR}/dex.crt" \
+    -extensions v3_req \
+    -extfile "${DEX_CERTS_DIR}/dex-openssl.cnf" 2>/dev/null
+  rm -f "${DEX_CERTS_DIR}/dex.csr"
+  echo "  Done."
+fi
+
+# ── Step 2: Admin password hash ───────────────────────────────────────────────
+echo "[2/4] Generating admin password hash and user ID..."
+
+ADMIN_USER_ID=$(python3 -c "import uuid; print(uuid.uuid4())" 2>/dev/null \
+  || uuidgen 2>/dev/null | tr '[:upper:]' '[:lower:]' \
+  || cat /proc/sys/kernel/random/uuid 2>/dev/null \
+  || { echo "Error: cannot generate UUID" >&2; exit 1; })
+
+ADMIN_HASH=""
+
+# Try: bcrypt already installed
+if python3 -c "import bcrypt" 2>/dev/null; then
+  ADMIN_HASH=$(DEX_ADMIN_PASSWORD="${DEX_ADMIN_PASSWORD}" python3 -c "
+import bcrypt, os
+p = os.environ['DEX_ADMIN_PASSWORD']
+print(bcrypt.hashpw(p.encode(), bcrypt.gensalt(10)).decode())
+")
+fi
+
+# Fallback: temp venv + pip install bcrypt (no system-wide install needed)
+if [[ -z "${ADMIN_HASH}" ]]; then
+  echo "  bcrypt not found — installing in temp venv..."
+  _VENV=$(mktemp -d)
+  python3 -m venv "${_VENV}" 2>/dev/null
+  "${_VENV}/bin/pip" install -q bcrypt
+  ADMIN_HASH=$(DEX_ADMIN_PASSWORD="${DEX_ADMIN_PASSWORD}" "${_VENV}/bin/python" -c "
+import bcrypt, os
+p = os.environ['DEX_ADMIN_PASSWORD']
+print(bcrypt.hashpw(p.encode(), bcrypt.gensalt(10)).decode())
+")
+  rm -rf "${_VENV}"
+fi
+
+if [[ -z "${ADMIN_HASH}" ]]; then
+  echo "  Error: bcrypt hash generation failed." >&2
+  exit 1
+fi
+echo "  Done."
+
+# ── Step 3: Render Dex config.yaml ───────────────────────────────────────────
+echo "[3/4] Writing Dex config.yaml..."
+
+# Note: variables are shell-expanded here; bcrypt hash value ($2a$...) is safe
+# because shell only expands ${VAR} patterns, not literal $ in variable values.
+cat > "${DEX_DIR}/config.yaml" << DEXEOF
+# Dex OIDC — generated by scripts/setup-dex.sh (do not edit manually)
+issuer: https://${HOST_IP}:5556
+
+storage:
+  type: sqlite3
+  config:
+    file: /var/dex/dex.db
+
+web:
+  https: 0.0.0.0:5556
+  tlsCert: /etc/dex/certs/dex.crt
+  tlsKey: /etc/dex/certs/dex.key
+
+staticClients:
+  - id: headscale
+    redirectURIs:
+      - https://${HOST_IP}:8080/oidc/callback
+    name: Headscale
+    secret: ${DEX_CLIENT_SECRET}
+
+staticPasswords:
+  - email: admin@openclaw.private
+    hash: ${ADMIN_HASH}
+    username: admin
+    userID: ${ADMIN_USER_ID}
+
+enablePasswordDB: true
+
+oauth2:
+  skipApprovalScreen: true
+DEXEOF
+echo "  Done."
+
+# ── Step 4: Add OIDC section to headscale config ──────────────────────────────
+echo "[4/4] Updating headscale config with OIDC..."
+
+if grep -q "^oidc:" "${HS_CONFIG}"; then
+  echo "  OIDC section already present in config.yaml, skipping."
+else
+  printf '\n' >> "${HS_CONFIG}"
+  cat >> "${HS_CONFIG}" << OIDCEOF
+oidc:
+  only_start_if_oidc_is_available: false
+  issuer: https://${HOST_IP}:5556
+  client_id: headscale
+  client_secret: ${DEX_CLIENT_SECRET}
+  scope:
+    - openid
+    - profile
+    - email
+  allowed_users:
+    - admin@openclaw.private
+OIDCEOF
+  echo "  Done."
+fi
+
+echo ""
+echo "=== Dex setup complete ==="
+echo ""
+echo "Next steps:"
+echo "  1. yarn dex:up              — start Dex"
+echo "  2. podman restart headscale — reload headscale OIDC config"
+echo "  3. iPhone: Tailscale app → Use custom coordination server"
+echo "             URL: https://${HOST_IP}:8080"
+echo "             Login: admin@openclaw.private / <DEX_ADMIN_PASSWORD>"
+echo ""
+echo "  (Dex UI also accessible at https://${HOST_IP}:5556 for verification)"
