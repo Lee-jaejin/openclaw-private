@@ -1,0 +1,17 @@
+services:
+  ntfy:
+    image: binwiederhier/ntfy:v2.11.0
+    container_name: ntfy
+    command: serve --listen-http :8095
+    ports:
+      - "8095:8095"
+    volumes:
+      - ntfy-data:/var/lib/ntfy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+volumes:
+  ntfy-data:
